@@ -1,0 +1,14 @@
+{
+  "name": "al-rafay-corporation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AL RAFAY CORPORATION — premium pre-owned cars in Islamabad",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
