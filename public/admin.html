@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — {{SITE_NAME}}</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#171a20">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+
+<!-- ===================================================== SIGN-IN ========= -->
+<section class="login" id="loginView" aria-labelledby="loginTitle">
+  <div class="login__panel">
+    <a class="login__brand" href="/">
+      <span class="login__mark">97</span>
+      <span>
+        <strong>{{SITE_NAME}}</strong>
+        <small>Showroom admin</small>
+      </span>
+    </a>
+
+    <h1 class="login__title" id="loginTitle">Owner sign-in</h1>
+    <p class="login__text">Only the Gmail addresses approved for this website can open the dashboard.</p>
+
+    <div class="login__status" id="loginStatus" role="status"></div>
+
+    <div class="login__google" id="googleBlock" hidden>
+      <div id="gsiButton"></div>
+      <p class="login__hint">Sign in with the owner&rsquo;s Google account. Everyone else is refused.</p>
+    </div>
+
+    <form class="login__form" id="setupForm" hidden>
+      <h2>First-time setup</h2>
+      <p class="login__hint">Paste the one-time setup token printed in the server console (or set <code>ADMIN_EMAILS</code> in the environment), then add the owner&rsquo;s Gmail address.</p>
+      <div class="field">
+        <label for="setupToken">Setup token</label>
+        <input id="setupToken" name="token" type="text" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="setupEmail">Owner Gmail address</label>
+        <input id="setupEmail" name="email" type="email" autocomplete="email" required placeholder="owner@gmail.com">
+      </div>
+      <p class="form-note" id="setupNote"></p>
+      <button class="btn btn--primary btn--block" type="submit">Save and sign in</button>
+    </form>
+
+    <form class="login__form" id="passwordForm" hidden>
+      <h2>Emergency password</h2>
+      <p class="login__hint">Use this only when Google sign-in is not available. You can disable it in <strong>Access</strong> once Google is working.</p>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <p class="form-note" id="passwordNote"></p>
+      <button class="btn btn--outline btn--block" type="submit">Sign in with password</button>
+    </form>
+
+    <p class="login__foot"><a href="/">← Back to the website</a></p>
+  </div>
+</section>
+
+<!-- ==================================================== DASHBOARD ======== -->
+<div class="app" id="appView" hidden>
+  <header class="app__top">
+    <a class="app__brand" href="/" title="Open the website">
+      <span class="app__mark">97</span>
+      <span class="app__brand-text">
+        <strong>{{SITE_NAME}}</strong>
+        <small>Admin dashboard</small>
+      </span>
+    </a>
+    <div class="app__top-actions">
+      <span class="badge" id="storageBadge" title="Where listings and photos are stored">storage</span>
+      <span class="badge badge--user" id="userChip"></span>
+      <a class="btn btn--ghost btn--sm" href="/" target="_blank" rel="noopener">View site</a>
+      <button class="btn btn--outline btn--sm" type="button" id="signOut">Sign out</button>
+    </div>
+  </header>
+
+  <nav class="app__tabs" id="appTabs" aria-label="Dashboard sections">
+    <button class="tab is-active" type="button" data-tab="dashboard">Dashboard</button>
+    <button class="tab" type="button" data-tab="cars">Cars</button>
+    <button class="tab" type="button" data-tab="editor">Add car</button>
+    <button class="tab" type="button" data-tab="messages">Messages <span class="tab__count" id="unreadCount" hidden>0</span></button>
+    <button class="tab" type="button" data-tab="settings">Business settings</button>
+    <button class="tab" type="button" data-tab="access">Access</button>
+  </nav>
+
+  <main class="app__main">
+
+    <!-- ---------------------------------------------------- dashboard -->
+    <section class="panel is-active" id="panel-dashboard">
+      <header class="panel__head">
+        <div>
+          <h2>Showroom at a glance</h2>
+          <p class="muted">Live figures from your inventory. Everything here updates the public website instantly.</p>
+        </div>
+      </header>
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="panel__split">
+        <div class="card">
+          <h3 class="card__title">Quick actions</h3>
+          <div class="quick-actions">
+            <button class="btn btn--primary" type="button" data-goto="editor">+ Add a car</button>
+            <button class="btn btn--outline" type="button" data-goto="cars">Manage inventory</button>
+            <button class="btn btn--outline" type="button" data-goto="messages">Read messages</button>
+            <button class="btn btn--outline" type="button" data-goto="settings">Edit business details</button>
+            <button class="btn btn--outline" type="button" data-goto="access">Access &amp; security</button>
+            <a class="btn btn--outline" href="/api/admin/export">Download backup (JSON)</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card__title">Recently added</h3>
+          <ul class="mini-list" id="recentList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------- cars -->
+    <section class="panel" id="panel-cars">
+      <header class="panel__head">
+        <div>
+          <h2>Inventory</h2>
+          <p class="muted">Search, filter and edit every listing. Sold cars stay visible on the website marked in grey.</p>
+        </div>
+        <button class="btn btn--primary" type="button" data-goto="editor" id="addCarBtn">+ Add car</button>
+      </header>
+
+      <div class="toolbar">
+        <input type="search" id="carSearch" placeholder="Search title, make, model, ID…" aria-label="Search inventory">
+        <select id="carStatusFilter" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="available">Available</option>
+          <option value="reserved">Booked</option>
+          <option value="sold">Sold</option>
+        </select>
+        <select id="carMakeFilter" aria-label="Filter by make"><option value="">All makes</option></select>
+        <select id="carSort" aria-label="Sort inventory">
+          <option value="newest">Newest first</option>
+          <option value="price-desc">Price: high to low</option>
+          <option value="price-asc">Price: low to high</option>
+          <option value="title">Title A–Z</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="carTable">
+          <thead>
+            <tr>
+              <th scope="col">Car</th>
+              <th scope="col">Price</th>
+              <th scope="col">Year / km</th>
+              <th scope="col">Status</th>
+              <th scope="col">Photos</th>
+              <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="carTableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty" id="carsEmpty" hidden>No cars match that search.</p>
+    </section>
+
+    <!-- ------------------------------------------------------- editor -->
+    <section class="panel" id="panel-editor">
+      <header class="panel__head">
+        <div>
+          <h2 id="editorTitle">Add a car</h2>
+          <p class="muted">Fill in the details, add photos and publish. Changes appear on the website immediately.</p>
+        </div>
+        <button class="btn btn--outline btn--sm" type="button" id="newCarBtn">Clear form</button>
+      </header>
+
+      <form id="carForm" class="editor">
+        <div class="editor__grid">
+          <fieldset class="card">
+            <legend>Car details</legend>
+            <div class="field">
+              <label for="cMake">Make *</label>
+              <input id="cMake" name="make" list="makeList" required maxlength="40" placeholder="Suzuki">
+              <datalist id="makeList">
+                <option value="Suzuki"></option><option value="Toyota"></option><option value="Honda"></option>
+                <option value="Daihatsu"></option><option value="KIA"></option><option value="Hyundai"></option>
+                <option value="MG"></option><option value="Nissan"></option><option value="Changan"></option>
+                <option value="United"></option><option value="Proton"></option><option value="Mitsubishi"></option>
+                <option value="Mercedes-Benz"></option><option value="BMW"></option><option value="Audi"></option>
+              </datalist>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cModel">Model *</label>
+                <input id="cModel" name="model" required maxlength="40" placeholder="Alto">
+              </div>
+              <div class="field">
+                <label for="cVariant">Variant</label>
+                <input id="cVariant" name="variant" maxlength="60" placeholder="VXR">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cYear">Model year *</label>
+                <input id="cYear" name="year" type="number" min="1970" max="2100" required>
+              </div>
+              <div class="field">
+                <label for="cPrice">Price (PKR) *</label>
+                <input id="cPrice" name="price" type="number" min="0" step="1000" required placeholder="2550000">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cMileage">Mileage (km)</label>
+                <input id="cMileage" name="mileage" type="number" min="0" step="1000">
+              </div>
+              <div class="field">
+                <label for="cEngine">Engine</label>
+                <input id="cEngine" name="engine" maxlength="40" placeholder="660 cc">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cFuel">Fuel</label>
+                <select id="cFuel" name="fuel"></select>
+              </div>
+              <div class="field">
+                <label for="cTransmission">Transmission</label>
+                <select id="cTransmission" name="transmission"></select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cBody">Body type</label>
+                <select id="cBody" name="bodyType"></select>
+              </div>
+              <div class="field">
+                <label for="cColor">Colour</label>
+                <input id="cColor" name="color" maxlength="40" placeholder="White">
+              </div>
+            </div>
+            <div class="field">
+              <label for="cRegistrationCity">Registration city</label>
+              <input id="cRegistrationCity" name="registrationCity" list="cityList" maxlength="60" placeholder="Islamabad">
+              <datalist id="cityList">
+                <option value="Islamabad"></option><option value="Rawalpindi"></option><option value="Lahore"></option>
+                <option value="Karachi"></option><option value="Peshawar"></option><option value="Quetta"></option>
+                <option value="Faisalabad"></option><option value="Multan"></option><option value="Abbottabad"></option>
+                <option value="Mirpur (AJK)"></option>
+              </datalist>
+            </div>
+            <div class="field">
+              <label for="cDescription">Description</label>
+              <textarea id="cDescription" name="description" rows="6" maxlength="4000" placeholder="Condition, features, service history, documents…"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cStatus">Status</label>
+                <select id="cStatus" name="status"></select>
+              </div>
+              <div class="field field--check">
+                <label class="check">
+                  <input id="cFeatured" name="featured" type="checkbox">
+                  <span>Show in Featured cars</span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Photos</legend>
+            <p class="muted small">Drag to reorder. The first photo is the cover shown on cards. Large photos are resized automatically before upload.</p>
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="fileInput" accept="image/*" multiple hidden>
+              <p><strong>Drop photos here</strong> or <button type="button" class="link-btn" id="browseBtn">choose files</button></p>
+              <p class="muted small">JPG, PNG, WebP or GIF up to 8 MB each.</p>
+            </div>
+            <div class="image-list" id="imageList"></div>
+            <div class="field">
+              <label for="imageUrl">…or paste an image link</label>
+              <div class="field-inline">
+                <input id="imageUrl" type="url" placeholder="https://example.com/photo.jpg">
+                <button class="btn btn--outline btn--sm" type="button" id="addImageUrl">Add</button>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="editor__actions">
+          <p class="form-note" id="carFormNote"></p>
+          <button class="btn btn--primary btn--lg" type="submit" id="saveCar">Save car</button>
+          <button class="btn btn--outline" type="button" id="cancelEdit" hidden>Cancel edit</button>
+          <button class="btn btn--danger" type="button" id="deleteCar" hidden>Delete car</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ----------------------------------------------------- messages -->
+    <section class="panel" id="panel-messages">
+      <header class="panel__head">
+        <div>
+          <h2>Enquiries</h2>
+          <p class="muted">Messages sent from the website contact forms land here. Reply by calling or on WhatsApp.</p>
+        </div>
+        <button class="btn btn--outline btn--sm" type="button" id="refreshMessages">Refresh</button>
+      </header>
+      <div class="inbox" id="inbox"></div>
+      <p class="empty" id="messagesEmpty" hidden>No messages yet.</p>
+    </section>
+
+    <!-- ----------------------------------------------------- settings -->
+    <section class="panel" id="panel-settings">
+      <header class="panel__head">
+        <div>
+          <h2>Business settings</h2>
+          <p class="muted">These values feed the whole website: header, hero, contact block, footer, Google map and SEO tags.</p>
+        </div>
+        <button class="btn btn--outline btn--sm" type="button" id="reloadSite">Reload</button>
+      </header>
+
+      <form id="siteForm" class="settings">
+        <fieldset class="card">
+          <legend>Identity</legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="sBusinessName">Business name</label>
+              <input id="sBusinessName" name="businessName" maxlength="90">
+            </div>
+            <div class="field">
+              <label for="sShortName">Short name</label>
+              <input id="sShortName" name="shortName" maxlength="60">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="sLogoText">Logo text</label>
+              <input id="sLogoText" name="logoText" maxlength="40" placeholder="97 Group">
+            </div>
+            <div class="field">
+              <label for="sEstablished">Trading since (year)</label>
+              <input id="sEstablished" name="establishedYear" type="number" min="1900" max="2100">
+            </div>
+          </div>
+          <div class="field">
+            <label>Logo image (replaces the “97 Group” text mark)</label>
+            <div class="logo-manager" id="logoManager">
+              <div class="logo-manager__preview" id="logoPreview"></div>
+              <div class="logo-manager__actions">
+                <input type="file" id="logoInput" accept="image/*" hidden>
+                <button class="btn btn--outline btn--sm" type="button" id="logoBrowse">Upload logo</button>
+                <button class="btn btn--ghost-dark btn--sm" type="button" id="logoClear">Remove</button>
+              </div>
+            </div>
+            <input type="hidden" id="sLogoImage" name="logoImage">
+            <p class="muted small" id="logoNote"></p>
+          </div>
+          <div class="field">
+            <label for="sFooterCredit">Footer credit line</label>
+            <input id="sFooterCredit" name="footerCredit" maxlength="120">
+          </div>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Home page text</legend>
+          <div class="field">
+            <label for="sTagline">Tagline</label>
+            <input id="sTagline" name="tagline" maxlength="120">
+          </div>
+          <div class="field">
+            <label for="sHeadline">Hero headline</label>
+            <input id="sHeadline" name="headline" maxlength="160">
+          </div>
+          <div class="field">
+            <label for="sHeroDescription">Hero paragraph</label>
+            <textarea id="sHeroDescription" name="heroDescription" rows="3" maxlength="600"></textarea>
+          </div>
+          <div class="field">
+            <label for="sAbout">About the dealership (owners section)</label>
+            <textarea id="sAbout" name="about" rows="6" maxlength="3000"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Location &amp; contact</legend>
+          <div class="field">
+            <label for="sAddress">Address</label>
+            <input id="sAddress" name="address" maxlength="200" placeholder="Harno (Harnoi) Thanda Pani, Latrar Road, Islamabad">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="sCity">City</label>
+              <input id="sCity" name="city" maxlength="60">
+            </div>
+            <div class="field">
+              <label for="sHours">Business hours</label>
+              <input id="sHours" name="businessHours" maxlength="140">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sPhones">Phone numbers (comma separated)</label>
+            <input id="sPhones" name="phones" placeholder="03155521697, 03000119297">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="sWhatsapp">WhatsApp number (with country code, e.g. 923155521697)</label>
+              <input id="sWhatsapp" name="whatsappNumber" placeholder="923155521697">
+            </div>
+            <div class="field">
+              <label for="sEmail">Email (optional)</label>
+              <input id="sEmail" name="email" type="email" maxlength="120">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sMapEmbed">Google Maps link <em>or</em> full &lt;iframe&gt; embed code</label>
+            <textarea id="sMapEmbed" name="mapEmbed" rows="3" placeholder="Paste the Google Maps embed code here — the website map updates automatically."></textarea>
+          </div>
+          <div class="field">
+            <label for="sMapLink">“Get directions” link (optional)</label>
+            <input id="sMapLink" name="mapLink" placeholder="https://maps.app.goo.gl/…">
+          </div>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Owners</legend>
+          <div id="ownersEditor" class="repeat"></div>
+          <button class="btn btn--outline btn--sm" type="button" data-add-row="owners">+ Add owner</button>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Counters (numbers band)</legend>
+          <div id="statsEditor" class="repeat"></div>
+          <button class="btn btn--outline btn--sm" type="button" data-add-row="stats">+ Add counter</button>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Why choose us</legend>
+          <div id="whyEditor" class="repeat"></div>
+          <button class="btn btn--outline btn--sm" type="button" data-add-row="whyChooseUs">+ Add reason</button>
+        </fieldset>
+
+        <fieldset class="card">
+          <legend>Social links &amp; SEO</legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="sFacebook">Facebook page URL</label>
+              <input id="sFacebook" name="social.facebook" type="url">
+            </div>
+            <div class="field">
+              <label for="sInstagram">Instagram URL</label>
+              <input id="sInstagram" name="social.instagram" type="url">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="sYoutube">YouTube URL</label>
+              <input id="sYoutube" name="social.youtube" type="url">
+            </div>
+            <div class="field">
+              <label for="sTiktok">TikTok URL</label>
+              <input id="sTiktok" name="social.tiktok" type="url">
+            </div>
+          </div>
+          <div class="field">
+            <label for="sSeoTitle">SEO title</label>
+            <input id="sSeoTitle" name="seo.title" maxlength="160">
+          </div>
+          <div class="field">
+            <label for="sSeoDescription">SEO description</label>
+            <textarea id="sSeoDescription" name="seo.description" rows="3" maxlength="320"></textarea>
+          </div>
+          <div class="field">
+            <label for="sSeoKeywords">SEO keywords</label>
+            <input id="sSeoKeywords" name="seo.keywords" maxlength="320">
+          </div>
+        </fieldset>
+
+        <div class="editor__actions">
+          <p class="form-note" id="siteNote"></p>
+          <button class="btn btn--primary btn--lg" type="submit">Save settings</button>
+          <button class="btn btn--outline" type="button" data-goto="access">Who can sign in? →</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ------------------------------------------------------- access -->
+    <section class="panel" id="panel-access">
+      <header class="panel__head">
+        <div>
+          <h2>Access &amp; security</h2>
+          <p class="muted">Control which Gmail addresses can open this dashboard.</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h3 class="card__title">Allowed Google accounts</h3>
+        <p class="muted small">Add the owner&rsquo;s Gmail address here. Any other Google account is refused, even if the password is known.</p>
+        <div id="emailList" class="email-list"></div>
+        <div class="field-inline">
+          <input type="email" id="newAdminEmail" placeholder="name@gmail.com">
+          <button class="btn btn--primary btn--sm" type="button" id="addAdminEmail">Add address</button>
+        </div>
+        <p class="form-note" id="accessNote"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">Emergency password</h3>
+        <p class="muted small">A fallback sign-in for when Google is unreachable or not configured yet. Disable it once Google sign-in works — Google is the safer option.</p>
+        <div class="field field--inline">
+          <input type="password" id="newPassword" placeholder="New password (12+ characters)" autocomplete="new-password">
+          <button class="btn btn--outline btn--sm" type="button" id="savePassword">Set password</button>
+          <button class="btn btn--danger btn--sm" type="button" id="disablePassword">Disable</button>
+        </div>
+        <p class="form-note" id="passwordChangeNote"></p>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">Backup</h3>
+        <p class="muted small">Download every listing, setting and enquiry as a JSON file. Keep a copy somewhere safe.</p>
+        <a class="btn btn--outline" href="/api/admin/export">Download backup</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="app__bottom" aria-label="Dashboard sections (mobile)">
+    <button class="tab is-active" type="button" data-tab="dashboard">Home</button>
+    <button class="tab" type="button" data-tab="cars">Cars</button>
+    <button class="tab" type="button" data-tab="editor" data-new-car>Add</button>
+    <button class="tab" type="button" data-tab="messages">Inbox</button>
+    <button class="tab" type="button" data-tab="settings">Settings</button>
+  </nav>
+</div>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script src="/js/core.js" defer></script>
+<script src="/js/admin.js" defer></script>
+</body>
+</html>

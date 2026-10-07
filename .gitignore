@@ -5,4 +5,6 @@ node_modules/
 storage/
 public/uploads/*
 !public/uploads/.gitkeep
+# Raw image sources used by tools/build_images.py (generated assets are committed)
+rawcars/
 .DS_Store

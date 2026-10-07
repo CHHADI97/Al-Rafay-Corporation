@@ -1,0 +1,13 @@
+{
+  "note": "Placeholder imagery shipped with this repository. Replace every photo with real pictures of the actual cars from Admin → Cars.",
+  "studio_placeholders": "public/assets/img/cars/*.webp and public/assets/img/hero/*.webp are AI-generated studio-style renders normalised to a pure white background so they sit cleanly on the white showroom lane and on white cards. Several models share a base render with a different crop/zoom (see tools/derive_placeholders.py) so each listing still looks distinct. Regenerate with tools/build_images.py after adding real raw photos to rawcars/.",
+  "scene_photos": {
+    "alto.jpg": "Suzuki Alto (Pakistan) — Wikimedia Commons, CC BY-SA 4.0",
+    "mehran.jpg": "Suzuki Mehran — Wikimedia Commons, CC BY-SA 4.0",
+    "corolla.jpg": "Toyota Corolla (Pakistan) — Wikimedia Commons, CC BY-SA 4.0",
+    "yaris.jpg": "Toyota Yaris — Wikimedia Commons, CC BY-SA 4.0",
+    "suv.jpg": "Toyota Fortuner style SUV — Wikimedia Commons, CC BY-SA 4.0",
+    "suv-premium.jpg": "Toyota Fortuner style SUV — Wikimedia Commons, CC BY-SA 4.0"
+  },
+  "showroom": "public/assets/img/showroom.jpg — showroom interior, AI-generated placeholder used for social previews and as a fallback image."
+}

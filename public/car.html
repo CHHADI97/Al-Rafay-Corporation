@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{SEO_TITLE}}</title>
+<meta name="description" content="{{SEO_DESCRIPTION}}">
+<meta name="theme-color" content="#b01218">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="{{OG_TYPE}}">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{SEO_TITLE}}">
+<meta property="og:description" content="{{SEO_DESCRIPTION}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{OG_IMAGE}}">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<link rel="stylesheet" href="/css/site.css">
+<script type="application/ld+json" nonce="{{NONCE}}">{{JSONLD}}</script>
+</head>
+<body class="page page--detail">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="topbar">
+  <div class="shell topbar__inner">
+    <p class="topbar__item">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
+      <span>{{ADDRESS}}</span>
+    </p>
+    <p class="topbar__item">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>
+      <a href="{{PHONE_1_TEL}}">{{PHONE_1}}</a>
+    </p>
+    <p class="topbar__item topbar__urdu" lang="ur" dir="rtl">تفصیلات دیکھیں، پھر کال یا واٹس ایپ کریں</p>
+  </div>
+</div>
+
+<header class="site-header site-header--solid" id="siteHeader">
+  <div class="shell site-header__inner">
+    <a class="logo" href="/" aria-label="{{SITE_NAME}} — home">{{LOGO_MARK}}</a>
+    <nav class="nav" id="primaryNav" aria-label="Main navigation">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link is-active" href="/cars">Cars</a>
+      <a class="nav__link" href="/#brands">Brands</a>
+      <a class="nav__link" href="/#why-us">Why Us</a>
+      <a class="nav__link" href="/#owners">Owners</a>
+      <a class="nav__link" href="/#contact">Contact</a>
+      <a class="nav__link nav__link--cta" href="{{PHONE_1_TEL}}">Call {{PHONE_1}}</a>
+    </nav>
+    <div class="site-header__actions">
+      <a class="btn btn--ghost btn--icon" href="{{WHATSAPP_LINK}}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-5.6-4.9c-.4-.7-.6-1.5-.4-2.2.1-.5.6-1.2 1-1.4.3-.1.7-.1.9.2l.8 1.3c.1.3.1.5-.1.7l-.4.5c-.2.2-.2.4-.1.6.4.8 1.4 1.9 2.3 2.3.3.1.4.1.6-.1l.5-.5c.2-.2.4-.2.7-.1l1.4.7c.3.1.4.5.3.8Z"/></svg>
+      </a>
+      <a class="btn btn--primary" href="#enquire">Enquire</a>
+      <button class="hamburger" type="button" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="shell">
+    <nav class="breadcrumb breadcrumb--bar" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span><a href="/cars">Cars</a><span aria-hidden="true">/</span><span id="crumbTitle">Details</span>
+    </nav>
+  </div>
+
+  <section class="section section--light section--tight">
+    <div class="shell detail">
+      <div class="detail__main">
+        <div class="gallery" id="gallery">
+          <div class="gallery__stage">
+            <button class="gallery__nav gallery__nav--prev" type="button" data-gallery-prev aria-label="Previous photo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 8.8 12l6.6 6.6-1.4 1.4L6 12l8-8 1.4 1.4Z"/></svg>
+            </button>
+            <img id="galleryMain" class="gallery__main" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10'%3E%3C/svg%3E" alt="" width="1400" height="800" decoding="async">
+            <button class="gallery__nav gallery__nav--next" type="button" data-gallery-next aria-label="Next photo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 5.4 15.2 12l-6.6 6.6 1.4 1.4L18 12l-8-8-1.4 1.4Z"/></svg>
+            </button>
+            <span class="gallery__badge" id="galleryBadge"></span>
+            <button class="gallery__zoom" type="button" id="galleryZoom" aria-label="Open full screen photo">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v2H6v4H4V4Zm10 0h6v6h-2V6h-4V4ZM4 14h2v4h4v2H4v-6Zm14 0h2v6h-6v-2h4v-4Z"/></svg>
+            </button>
+          </div>
+          <div class="gallery__thumbs" id="galleryThumbs" role="tablist" aria-label="Photo thumbnails"></div>
+        </div>
+
+        <div class="detail__block">
+          <h1 class="detail__title" id="carTitle">Loading car…</h1>
+          <p class="detail__sub" id="carSubtitle"></p>
+          <div class="detail__pills" id="carPills"></div>
+          <p class="detail__price-mobile" id="carPriceMobile"></p>
+        </div>
+
+        <div class="detail__block">
+          <h2 class="block-title">Car overview</h2>
+          <dl class="spec-grid" id="specGrid"></dl>
+        </div>
+
+        <div class="detail__block">
+          <h2 class="block-title">Description</h2>
+          <div class="prose" id="carDescription"></div>
+          <ul class="check-list">
+            <li>Documents and file verified before handover</li>
+            <li>Transfer, token tax and biometric support included</li>
+            <li>Trade-in and bank financing available</li>
+          </ul>
+        </div>
+
+        <div class="detail__block" id="enquire">
+          <h2 class="block-title">Ask the owners about this car</h2>
+          <form class="card card--pad" id="carForm" novalidate>
+            <input type="hidden" id="carId" name="carId" value="">
+            <div class="field-row">
+              <div class="field">
+                <label for="cName">Your name *</label>
+                <input id="cName" name="name" type="text" autocomplete="name" required maxlength="80">
+              </div>
+              <div class="field">
+                <label for="cPhone">Phone / WhatsApp *</label>
+                <input id="cPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="03xx xxx xxxx">
+              </div>
+            </div>
+            <div class="field">
+              <label for="cMessage">Message *</label>
+              <textarea id="cMessage" name="message" rows="4" required maxlength="1200"></textarea>
+            </div>
+            <p class="form-note" id="carFormNote" role="status"></p>
+            <button class="btn btn--primary" type="submit">Send enquiry</button>
+            <p class="muted small">Or call directly — it is the fastest way to get an answer.</p>
+          </form>
+        </div>
+      </div>
+
+      <aside class="detail__side">
+        <div class="price-card card">
+          <div class="price-card__top">
+            <p class="price-card__label">Asking price</p>
+            <p class="price-card__value" id="carPrice">—</p>
+            <p class="price-card__note" id="carPriceNote"></p>
+          </div>
+          <div class="price-card__actions" id="priceCardActions"></div>
+          <ul class="price-card__facts" id="priceCardFacts"></ul>
+        </div>
+
+        <div class="card card--pad side-card">
+          <h3 class="card__title">Showroom</h3>
+          <p class="muted small">{{ADDRESS}}</p>
+          <p class="muted small">{{BUSINESS_HOURS}}</p>
+          <a class="btn btn--outline btn--block" href="{{MAP_LINK}}" target="_blank" rel="noopener">Get directions</a>
+        </div>
+
+        <div class="card card--pad side-card">
+          <h3 class="card__title">Share this car</h3>
+          <div class="share-row" id="shareRow"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--tint" id="relatedSection" hidden>
+    <div class="shell">
+      <div class="section__head reveal">
+        <p class="eyebrow">You may also like</p>
+        <h2 class="section__title">Similar cars in our yard</h2>
+      </div>
+      <div class="car-grid" id="relatedGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell site-footer__grid">
+    <div class="site-footer__brand">
+      <a class="logo logo--footer" href="/">{{LOGO_MARK}}</a>
+      <p>{{SITE_NAME}} — {{TAGLINE}}</p>
+      <p class="site-footer__urdu" lang="ur" dir="rtl">استعمال شدہ گاڑیوں کی قابلِ اعتماد خرید و فروخت</p>
+      <div class="site-footer__social" id="footerSocial"></div>
+    </div>
+    <nav class="site-footer__col" aria-label="Footer navigation">
+      <h3>Explore</h3>
+      <a href="/">Home</a>
+      <a href="/cars">All cars</a>
+      <a href="/cars?status=available">Available now</a>
+      <a href="/cars?sort=price-asc">Lowest price first</a>
+      <a href="/#brands">Browse by brand</a>
+    </nav>
+    <nav class="site-footer__col" aria-label="Popular searches">
+      <h3>Popular searches</h3>
+      <a href="/cars?make=Suzuki">Suzuki cars</a>
+      <a href="/cars?make=Toyota">Toyota cars</a>
+      <a href="/cars?make=Honda">Honda cars</a>
+      <a href="/cars?make=Suzuki&model=Alto">Suzuki Alto</a>
+      <a href="/cars?make=Toyota&model=Corolla">Toyota Corolla</a>
+    </nav>
+    <div class="site-footer__col">
+      <h3>Showroom</h3>
+      <p>{{ADDRESS}}</p>
+      <p><a href="{{PHONE_1_TEL}}">{{PHONE_1}}</a> · <a href="{{PHONE_2_TEL}}">{{PHONE_2}}</a></p>
+      <p>{{BUSINESS_HOURS}}</p>
+      <p><a href="/admin" rel="nofollow">Admin login</a></p>
+    </div>
+  </div>
+  <div class="shell site-footer__bottom">
+    <p>© <span id="copyrightYear">{{YEAR}}</span> {{SITE_NAME}}. All rights reserved.</p>
+    <p class="credit">{{FOOTER_CREDIT}}</p>
+  </div>
+</footer>
+
+<div class="callbar" id="callBar">
+  <a class="callbar__btn callbar__btn--call" href="{{PHONE_1_TEL}}">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>
+    Call owner
+  </a>
+  <a class="callbar__btn callbar__btn--wa" href="{{WHATSAPP_LINK}}" target="_blank" rel="noopener" id="callBarWa">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-5.6-4.9c-.4-.7-.6-1.5-.4-2.2.1-.5.6-1.2 1-1.4.3-.1.7-.1.9.2l.8 1.3c.1.3.1.5-.1.7l-.4.5c-.2.2-.2.4-.1.6.4.8 1.4 1.9 2.3 2.3.3.1.4.1.6-.1l.5-.5c.2-.2.4-.2.7-.1l1.4.7c.3.1.4.5.3.8Z"/></svg>
+    WhatsApp
+  </a>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" type="button" id="lightboxClose" aria-label="Close gallery">&times;</button>
+  <button class="lightbox__nav lightbox__nav--prev" type="button" id="lightboxPrev" aria-label="Previous photo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 8.8 12l6.6 6.6-1.4 1.4L6 12l8-8 1.4 1.4Z"/></svg>
+  </button>
+  <img class="lightbox__img" id="lightboxImg" alt="">
+  <button class="lightbox__nav lightbox__nav--next" type="button" id="lightboxNext" aria-label="Next photo">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 5.4 15.2 12l-6.6 6.6 1.4 1.4L18 12l-8-8-1.4 1.4Z"/></svg>
+  </button>
+  <p class="lightbox__counter" id="lightboxCounter"></p>
+</div>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script src="/js/core.js" defer></script>
+<script src="/js/detail.js" defer></script>
+</body>
+</html>

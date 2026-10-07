@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{SEO_TITLE}}</title>
+<meta name="description" content="{{SEO_DESCRIPTION}}">
+<meta name="keywords" content="{{SEO_KEYWORDS}}">
+<meta name="theme-color" content="#b01218">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta property="og:type" content="{{OG_TYPE}}">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{SEO_TITLE}}">
+<meta property="og:description" content="{{SEO_DESCRIPTION}}">
+<meta property="og:image" content="{{OG_IMAGE}}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<link rel="stylesheet" href="/css/site.css">
+<script type="application/ld+json" nonce="{{NONCE}}">{{JSONLD}}</script>
+</head>
+<body class="page page--inventory">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="topbar">
+  <div class="shell topbar__inner">
+    <p class="topbar__item">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
+      <span>{{ADDRESS}}</span>
+    </p>
+    <p class="topbar__item">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>
+      <a href="{{PHONE_1_TEL}}">{{PHONE_1}}</a>
+    </p>
+    <p class="topbar__item topbar__urdu" lang="ur" dir="rtl">آج دستیاب گاڑیوں کی فہرست</p>
+  </div>
+</div>
+
+<header class="site-header site-header--solid" id="siteHeader">
+  <div class="shell site-header__inner">
+    <a class="logo" href="/" aria-label="{{SITE_NAME}} — home">{{LOGO_MARK}}</a>
+    <nav class="nav" id="primaryNav" aria-label="Main navigation">
+      <a class="nav__link" href="/">Home</a>
+      <a class="nav__link is-active" href="/cars">Cars</a>
+      <a class="nav__link" href="/#brands">Brands</a>
+      <a class="nav__link" href="/#why-us">Why Us</a>
+      <a class="nav__link" href="/#owners">Owners</a>
+      <a class="nav__link" href="/#contact">Contact</a>
+      <a class="nav__link nav__link--cta" href="{{PHONE_1_TEL}}">Call {{PHONE_1}}</a>
+    </nav>
+    <div class="site-header__actions">
+      <a class="btn btn--ghost btn--icon" href="{{WHATSAPP_LINK}}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-5.6-4.9c-.4-.7-.6-1.5-.4-2.2.1-.5.6-1.2 1-1.4.3-.1.7-.1.9.2l.8 1.3c.1.3.1.5-.1.7l-.4.5c-.2.2-.2.4-.1.6.4.8 1.4 1.9 2.3 2.3.3.1.4.1.6-.1l.5-.5c.2-.2.4-.2.7-.1l1.4.7c.3.1.4.5.3.8Z"/></svg>
+      </a>
+      <a class="btn btn--primary" href="#contact-strip">Enquire</a>
+      <button class="hamburger" type="button" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-head">
+    <div class="shell">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a><span aria-hidden="true">/</span><span>Cars for sale</span>
+      </nav>
+      <h1 class="page-head__title">Cars for sale in <span class="hl">{{CITY}}</span></h1>
+      <p class="page-head__lede" id="resultSummary">Loading today&rsquo;s stock…</p>
+    </div>
+  </section>
+
+  <section class="section section--light section--tight">
+    <div class="shell inventory">
+      <aside class="filters card" id="filterPanel" aria-label="Filter cars">
+        <div class="filters__head">
+          <h2>Filter</h2>
+          <button class="link-btn" type="button" id="clearFilters">Clear all</button>
+        </div>
+
+        <form id="filterForm" class="filters__form">
+          <div class="field">
+            <label for="fSearch">Search</label>
+            <input id="fSearch" name="q" type="search" placeholder="Alto VXL, Corolla, white…" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fMake">Make</label>
+            <select id="fMake" name="make"><option value="">All makes</option></select>
+          </div>
+          <div class="field">
+            <label for="fModel">Model</label>
+            <select id="fModel" name="model"><option value="">All models</option></select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="fMinPrice">Price from</label>
+              <input id="fMinPrice" name="minPrice" type="number" min="0" step="50000" placeholder="0">
+            </div>
+            <div class="field">
+              <label for="fMaxPrice">Price to</label>
+              <input id="fMaxPrice" name="maxPrice" type="number" min="0" step="50000" placeholder="Any">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="fMinYear">Year from</label>
+              <select id="fMinYear" name="minYear"><option value="">Any</option></select>
+            </div>
+            <div class="field">
+              <label for="fMaxYear">Year to</label>
+              <select id="fMaxYear" name="maxYear"><option value="">Any</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="fStatus">Availability</label>
+            <select id="fStatus" name="status">
+              <option value="">All cars</option>
+              <option value="available">Available now</option>
+              <option value="reserved">Booked</option>
+              <option value="sold">Sold (for reference)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fSort">Sort by</label>
+            <select id="fSort" name="sort">
+              <option value="">Featured first</option>
+              <option value="newest">Newest model year</option>
+              <option value="oldest">Oldest model year</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="mileage-asc">Lowest mileage</option>
+              <option value="name">Name (A–Z)</option>
+            </select>
+          </div>
+        </form>
+
+        <div class="filters__help">
+          <p class="muted small">Cannot find it? Call <a href="{{PHONE_1_TEL}}">{{PHONE_1}}</a> or <a href="{{PHONE_2_TEL}}">{{PHONE_2}}</a> — we source cars on request.</p>
+        </div>
+      </aside>
+
+      <div class="inventory__main">
+        <div class="inventory__bar">
+          <button class="btn btn--outline filters-toggle" type="button" id="filtersToggle" aria-expanded="false" aria-controls="filterPanel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v2H3V5Zm3 6h12v2H6v-2Zm3 6h6v2H9v-2Z"/></svg>
+            Filters
+          </button>
+          <div class="active-filters" id="activeFilters"></div>
+          <p class="inventory__count" id="inventoryCount"></p>
+        </div>
+
+        <div class="car-grid car-grid--wide" id="carGrid" aria-live="polite">
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          <div class="skeleton-card"></div><div class="skeleton-card"></div>
+        </div>
+
+        <p class="empty-state" id="emptyState" hidden>
+          <strong>No cars match those filters.</strong>
+          <span>Try widening the price range, or <a href="{{WHATSAPP_LINK}}" target="_blank" rel="noopener">message us on WhatsApp</a> — new stock arrives every week.</span>
+        </p>
+
+        <div class="inventory__more">
+          <button class="btn btn--outline btn--lg" type="button" id="loadMore" hidden>Load more cars</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="contact-strip">
+    <div class="shell cta-band__inner reveal">
+      <div>
+        <h2 class="cta-band__title">Prefer to talk it through?</h2>
+        <p class="cta-band__text">Speak directly to the owners — {{OWNER_1_NAME}} or {{OWNER_2_NAME}} — and we will match you with the right car.</p>
+      </div>
+      <div class="cta-band__actions">
+        <a class="btn btn--light btn--lg" href="{{PHONE_1_TEL}}">Call {{PHONE_1}}</a>
+        <a class="btn btn--light btn--lg" href="{{PHONE_2_TEL}}">Call {{PHONE_2}}</a>
+        <a class="btn btn--whatsapp btn--lg" href="{{OWNER_1_WA}}" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell site-footer__grid">
+    <div class="site-footer__brand">
+      <a class="logo logo--footer" href="/">{{LOGO_MARK}}</a>
+      <p>{{SITE_NAME}} — {{TAGLINE}}</p>
+      <p class="site-footer__urdu" lang="ur" dir="rtl">استعمال شدہ گاڑیوں کی قابلِ اعتماد خرید و فروخت</p>
+      <div class="site-footer__social" id="footerSocial"></div>
+    </div>
+    <nav class="site-footer__col" aria-label="Footer navigation">
+      <h3>Explore</h3>
+      <a href="/">Home</a>
+      <a href="/cars">All cars</a>
+      <a href="/cars?status=available">Available now</a>
+      <a href="/cars?sort=price-asc">Lowest price first</a>
+      <a href="/#brands">Browse by brand</a>
+    </nav>
+    <nav class="site-footer__col" aria-label="Popular searches">
+      <h3>Popular searches</h3>
+      <a href="/cars?make=Suzuki">Suzuki cars</a>
+      <a href="/cars?make=Toyota">Toyota cars</a>
+      <a href="/cars?make=Honda">Honda cars</a>
+      <a href="/cars?make=Suzuki&model=Alto">Suzuki Alto</a>
+      <a href="/cars?make=Toyota&model=Corolla">Toyota Corolla</a>
+    </nav>
+    <div class="site-footer__col">
+      <h3>Showroom</h3>
+      <p>{{ADDRESS}}</p>
+      <p><a href="{{PHONE_1_TEL}}">{{PHONE_1}}</a> · <a href="{{PHONE_2_TEL}}">{{PHONE_2}}</a></p>
+      <p>{{BUSINESS_HOURS}}</p>
+      <p><a href="/admin" rel="nofollow">Admin login</a></p>
+    </div>
+  </div>
+  <div class="shell site-footer__bottom">
+    <p>© <span id="copyrightYear">{{YEAR}}</span> {{SITE_NAME}}. All rights reserved.</p>
+    <p class="credit">{{FOOTER_CREDIT}}</p>
+  </div>
+</footer>
+
+<a class="whatsapp-float" href="{{WHATSAPP_LINK}}" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-5.6-4.9c-.4-.7-.6-1.5-.4-2.2.1-.5.6-1.2 1-1.4.3-.1.7-.1.9.2l.8 1.3c.1.3.1.5-.1.7l-.4.5c-.2.2-.2.4-.1.6.4.8 1.4 1.9 2.3 2.3.3.1.4.1.6-.1l.5-.5c.2-.2.4-.2.7-.1l1.4.7c.3.1.4.5.3.8Z"/></svg>
+  <span class="whatsapp-float__label">Chat with us</span>
+</a>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script src="/js/core.js" defer></script>
+<script src="/js/inventory.js" defer></script>
+</body>
+</html>
