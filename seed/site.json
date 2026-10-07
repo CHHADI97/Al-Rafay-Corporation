@@ -1,11 +1,107 @@
 {
+  "businessName": "Alraffay Corporation & Traders",
+  "shortName": "Alraffay Corporation",
+  "logoText": "97 Group",
+  "logoImage": "",
+  "logoNote": "Placeholder wordmark. Upload the 97 Group logo from Admin → Business settings and it replaces this text everywhere.",
   "tagline": "Premium Cars. Trusted Deals.",
-  "heroDescription": "A considered collection of Pakistan's most-loved cars, with a more personal way to find the one that feels right.",
-  "about": "At AL RAFAY CORPORATION, finding your next car starts with a real conversation. From practical Suzuki favourites to a Corolla, Yaris or capable SUV, we're here to help Islamabad drivers explore the right options with confidence.",
-  "ownerName": "CH NAEEM AKHTER",
-  "ownerPhone": "03155521697",
-  "secondOwnerName": "CH FAHEEM AKHTER",
-  "secondOwnerPhone": "03000119297",
-  "location": "Lethrar Road, Thanda Pani, Nilore, Islamabad, Pakistan",
-  "city": "Islamabad"
+  "headline": "Islamabad's trusted showroom for quality used cars",
+  "heroDescription": "Suzuki Alto, Mehran, Cultus, Wagon R and Bolan. Toyota Corolla, Yaris, Vitz, Prado and Hilux. Honda City, Civic and Vezel. Hand-picked, inspected stock with honest pricing — right here at Thanda Pani, Islamabad.",
+  "about": "Alraffay Corporation & Traders is a family-run dealership on Latrar Road, Thanda Pani (Harnoi), Islamabad. For years we have been buying, checking and reselling Pakistan's most-loved cars: Suzuki Alto, Mehran, Cultus, Wagon R, Swift and Bolan, Toyota Corolla, Yaris, Vitz, Passo, Prado and Hilux, Honda City, Civic, BR-V and Vezel, along with Daihatsu, KIA, Hyundai and MG. Every car is inspected in our own workshop before it reaches the yard, documents are verified, and transfer support is included. Call either owner directly — you will always speak to the person who actually knows the car.",
+  "establishedYear": 2008,
+  "businessHours": "Monday to Saturday, 9:00 AM – 8:00 PM",
+  "address": "Harno (Harnoi) Thanda Pani, Latrar Road, Islamabad",
+  "city": "Islamabad",
+  "addressLocality": "Thanda Pani (Harnoi)",
+  "streetAddress": "Harno, Latrar Road, Thanda Pani",
+  "region": "Islamabad Capital Territory",
+  "phones": [
+    "03155521697",
+    "03000119297"
+  ],
+  "whatsappNumber": "923155521697",
+  "email": "",
+  "mapEmbed": "",
+  "mapLink": "https://www.google.com/maps/search/?api=1&query=Harno+Thanda+Pani+Latrar+Road+Islamabad",
+  "mapQuery": "Harno Thanda Pani, Latrar Road, Islamabad",
+  "owners": [
+    {
+      "name": "Chaudhry Naeem Akhtar",
+      "role": "Owner",
+      "phone": "03155521697",
+      "whatsapp": "923155521697"
+    },
+    {
+      "name": "Chaudhry Faheem Akhtar",
+      "role": "Owner",
+      "phone": "03000119297",
+      "whatsapp": "923000119297"
+    }
+  ],
+  "stats": [
+    {
+      "value": 4200,
+      "suffix": "+",
+      "label": "Cars delivered"
+    },
+    {
+      "value": 18,
+      "suffix": "+",
+      "label": "Years in the trade"
+    },
+    {
+      "value": 65,
+      "suffix": "%",
+      "label": "Repeat & referral buyers"
+    },
+    {
+      "value": 60,
+      "suffix": "+",
+      "label": "Cars in stock"
+    }
+  ],
+  "whyChooseUs": [
+    {
+      "icon": "shield",
+      "title": "Inspected before listing",
+      "text": "Every car goes through our own workshop check — engine, suspension, air-conditioning, tyres and documents — before it is listed here."
+    },
+    {
+      "icon": "rupee",
+      "title": "Honest, straight pricing",
+      "text": "Market-linked prices with no hidden charges. What you see on the listing is the number you discuss at the yard."
+    },
+    {
+      "icon": "file",
+      "title": "Clear documents & transfer",
+      "text": "Verified files, token tax and transfer support included. We handle the paperwork so you drive away without a headache."
+    },
+    {
+      "icon": "handshake",
+      "title": "Owner-level dealing",
+      "text": "You deal directly with the owners — Chaudhry Naeem Akhtar and Chaudhry Faheem Akhtar — from the first call to delivery."
+    },
+    {
+      "icon": "swap",
+      "title": "Trade-in & financing",
+      "text": "Bring your current car for a fair exchange value, and ask us about easy bank financing and instalment plans."
+    },
+    {
+      "icon": "pin",
+      "title": "Easy Islamabad location",
+      "text": "Right on Latrar Road at Thanda Pani. Walk in any working day, take a test drive and check the car yourself."
+    }
+  ],
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "youtube": "",
+    "tiktok": ""
+  },
+  "seo": {
+    "title": "Alraffay Corporation & Traders — Used Cars in Islamabad | 97 Group",
+    "description": "Buy quality used Suzuki, Toyota and Honda cars in Islamabad. Alto, Mehran, Cultus, Wagon R, Corolla, Yaris, City and Civic ready for delivery. Visit Alraffay Corporation & Traders, Thanda Pani, Latrar Road — or call 03155521697.",
+    "keywords": "used cars Islamabad, Suzuki Alto Islamabad, Mehran for sale, Toyota Corolla Islamabad, Honda City used, car dealer Thanda Pani, 97 Group cars, Alraffay Corporation"
+  },
+  "footerCredit": "Website designed by Abdul Hadi"
 }

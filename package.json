@@ -1,12 +1,15 @@
 {
-  "name": "al-rafay-corporation",
-  "version": "1.0.0",
+  "name": "alraffay-corporation-traders",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "AL RAFAY CORPORATION — premium pre-owned cars in Islamabad",
+  "description": "Alraffay Corporation & Traders (97 Group) \u2014 used car dealership website for Islamabad with a Google-authenticated admin panel.",
   "scripts": {
     "start": "node server.mjs",
-    "dev": "node --watch server.mjs"
+    "dev": "node --watch server.mjs",
+    "check": "node --check server.mjs && node --check src/api.mjs && node --check src/auth.mjs && node --check src/pages.mjs && node --check src/static.mjs && node --check src/store.mjs && node --check src/http.mjs && node --check src/validate.mjs && node --check src/config.mjs && node --check public/js/core.js && node --check public/js/home.js && node --check public/js/inventory.js && node --check public/js/detail.js && node --check public/js/admin.js",
+    "images": "python3 tools/build_images.py",
+    "password": "node tools/set-password.mjs"
   },
   "engines": {
     "node": ">=20"
