@@ -1,0 +1,164 @@
+<main id="main">
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__veil" aria-hidden="true"></div>
+    <span class="hero__glow hero__glow--one" aria-hidden="true"></span>
+    <span class="hero__glow hero__glow--two" aria-hidden="true"></span>
+
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <span class="hero__badge" data-hero-badge>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          <span data-i18n="hero.badge">Thanda Pani · Lethrar Road · Islamabad</span>
+        </span>
+        <h1 class="hero__title" data-hero-title>Find the car that fits your life</h1>
+        <p class="hero__subtitle" data-hero-subtitle>
+          Suzuki, Toyota, Honda, Kia, Hyundai and more — inspected stock, clear pricing and paperwork handled on the spot at Thanda Pani, Lethrar Road, Islamabad.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn-lg btn-primary" href="/cars">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 16.5h14M4.5 16.5V12l2-5h11l2 5v4.5"/><circle cx="7.5" cy="17.8" r="1.6"/><circle cx="16.5" cy="17.8" r="1.6"/></svg>
+            <span data-i18n="hero.primary">View cars</span>
+          </a>
+          <a class="btn btn-lg btn-ghost" href="/contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6.5 3h3l1.5 4.5-2 1.5a11 11 0 0 0 6 6l1.5-2 4.5 1.5v3A2.5 2.5 0 0 1 18.5 20C10.5 19.5 4.5 13.5 4 5.5A2.5 2.5 0 0 1 6.5 3Z"/></svg>
+            <span data-i18n="hero.secondary">Contact us</span>
+          </a>
+        </div>
+        <div class="hero__meta" data-hero-meta>
+          <span class="hero__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 16.5h14M4.5 16.5V12l2-5h11l2 5v4.5"/><circle cx="7.5" cy="17.8" r="1.6"/><circle cx="16.5" cy="17.8" r="1.6"/></svg>
+            <span><strong class="num">24</strong> <span data-i18n="home.carsInStock">Cars in stock</span></span>
+          </span>
+          <span class="hero__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            <span data-site="city">Islamabad</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__fleet">
+      <div class="fleet" id="hero-fleet" aria-hidden="true"></div>
+      <div class="road" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="section section--tint" id="featured">
+    <div class="container">
+      <div class="section__head" style="max-width:none;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between">
+        <div style="max-width:640px">
+          <span class="section__eyebrow" data-i18n="common.featured">Featured</span>
+          <h2 data-i18n="home.featuredTitle">Featured cars</h2>
+          <p class="section__lead" data-i18n="home.featuredSubtitle">Hand-picked units from our current stock, updated as soon as they arrive.</p>
+        </div>
+        <a class="btn btn-outline" href="/cars">
+          <span data-i18n="common.viewAll">View all cars</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="grid grid--cars" id="featured-grid"><!--STATIC-FEATURED--></div>
+    </div>
+  </section>
+
+  <section class="section" id="brands">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <span class="section__eyebrow" data-i18n="nav.inventory">Inventory</span>
+        <h2 data-i18n="home.brandsTitle">Browse by company</h2>
+        <p class="section__lead" data-i18n="home.brandsSubtitle">Choose a brand to see the models we deal in most often.</p>
+      </div>
+      <div class="grid grid--brands" id="brand-grid"></div>
+    </div>
+  </section>
+
+  <section class="section section--slate" id="why">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <span class="section__eyebrow" data-i18n="nav.why">Why us</span>
+        <h2 data-i18n="home.whyTitle">Why Al Rafay</h2>
+        <p class="section__lead" data-i18n="home.whySubtitle">A family dealership that stands behind every car it sells.</p>
+      </div>
+      <div class="grid grid--why" id="why-grid"></div>
+      <div class="stats" id="stats-grid" style="margin-top:44px"></div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container about-grid">
+      <div class="about-media reveal">
+        <img src="/assets/img/showroom.jpg" alt="Al Rafay Corporation showroom in Islamabad" width="1200" height="900" loading="lazy" />
+        <div class="about-media__badge">
+          <strong class="num">20</strong>
+          <span data-i18n="home.statsTitle">Years in business</span>
+        </div>
+      </div>
+      <div>
+        <span class="section__eyebrow" data-i18n="home.aboutTitle">About us</span>
+        <h2 data-i18n="brand.name">Al Rafay Corporation &amp; Traders</h2>
+        <p data-about-text>
+          Al Rafay Corporation &amp; Traders is a family-run car dealership on Lethrar Road, Islamabad. We buy and sell both new and pre-owned vehicles, help you compare honest options within your budget, and complete the transfer paperwork for you.
+        </p>
+        <ul class="about-list" data-about-list></ul>
+        <div class="pill-row" style="margin-top:24px">
+          <a class="btn btn-primary" href="/cars" data-i18n="common.browseCars">Browse cars</a>
+          <a class="btn btn-outline" data-whatsapp-link href="#" target="_blank" rel="noopener" data-i18n="home.sellCta">Get a price on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint" id="contact">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <span class="section__eyebrow" data-i18n="nav.contact">Contact</span>
+        <h2 data-i18n="home.ownersTitle">Talk to the owners</h2>
+        <p class="section__lead" data-i18n="home.ownersSubtitle">No call centre — you speak directly with the people who own the business.</p>
+      </div>
+      <div class="grid grid--owners" id="owners-grid"></div>
+
+      <div class="two-col" style="margin-top:44px">
+        <div class="cta-band reveal">
+          <div>
+            <h3 data-i18n="home.locationTitle">Visit our showroom</h3>
+            <p data-site="address">Thanda Pani (Harno), Lethrar Road, Islamabad, Pakistan</p>
+            <p style="margin-top:10px"><strong data-i18n="contact.hoursLabel">Opening hours</strong>: <span data-site="hours">Monday – Saturday: 9:00 am – 8:00 pm</span></p>
+            <div class="pill-row" style="margin-top:16px">
+              <a class="btn btn-primary" data-map-link href="https://www.google.com/maps/search/?api=1&amp;query=Thanda+Pani+Lethrar+Road+Islamabad" target="_blank" rel="noopener" data-i18n="contact.directions">Open in Google Maps</a>
+              <a class="btn btn-light" href="/contact" data-i18n="nav.contact">Contact</a>
+            </div>
+          </div>
+        </div>
+        <div class="map-shell" id="map-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <span class="section__eyebrow">FAQ</span>
+        <h2 data-i18n="home.faqTitle">Questions buyers ask</h2>
+      </div>
+      <div class="accordion" id="faq-list" style="max-width:900px;margin-inline:auto"></div>
+    </div>
+  </section>
+
+  <section class="section section--crimson" id="sell">
+    <div class="container">
+      <div class="cta-band" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.24);backdrop-filter:blur(6px)">
+        <div>
+          <h3 style="color:#fff" data-i18n="home.sellTitle">Want to sell or exchange your car?</h3>
+          <p style="color:rgba(255,255,255,.86)" data-i18n="home.sellBody">Send us the details and either owner will call you back with a fair market price the same day.</p>
+        </div>
+        <div class="cta-band__actions">
+          <a class="btn btn-lg btn-light" data-sell-link href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.6-1.2A9 9 0 1 0 12 3Z"/></svg>
+            <span data-i18n="home.sellCta">Get a price on WhatsApp</span>
+          </a>
+          <a class="btn btn-lg btn-ghost" href="/contact" data-i18n="common.call">Call now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

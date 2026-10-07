@@ -1,0 +1,26 @@
+/* Self-hosted fonts (Outfit, Inter, Noto Nastaliq Urdu, Noto Naskh Arabic) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/assets/fonts/outfit-latin-400-normal.woff2') format('woff2');
+}
+@font-face { font-family: 'Outfit'; font-weight: 400; font-display: swap; src: url('/assets/fonts/outfit-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-weight: 500; font-display: swap; src: url('/assets/fonts/outfit-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-weight: 600; font-display: swap; src: url('/assets/fonts/outfit-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-weight: 700; font-display: swap; src: url('/assets/fonts/outfit-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Outfit'; font-weight: 800; font-display: swap; src: url('/assets/fonts/outfit-latin-800-normal.woff2') format('woff2'); }
+
+@font-face { font-family: 'Inter'; font-weight: 400; font-display: swap; src: url('/assets/fonts/inter-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 500; font-display: swap; src: url('/assets/fonts/inter-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 600; font-display: swap; src: url('/assets/fonts/inter-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 700; font-display: swap; src: url('/assets/fonts/inter-latin-700-normal.woff2') format('woff2'); }
+
+@font-face { font-family: 'Noto Nastaliq Urdu'; font-weight: 400; font-display: swap; src: url('/assets/fonts/noto-nastaliq-urdu-arabic-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Nastaliq Urdu'; font-weight: 600; font-display: swap; src: url('/assets/fonts/noto-nastaliq-urdu-arabic-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Naskh Arabic'; font-weight: 400; font-display: swap; src: url('/assets/fonts/noto-naskh-arabic-arabic-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Naskh Arabic'; font-weight: 500; font-display: swap; src: url('/assets/fonts/noto-naskh-arabic-arabic-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Naskh Arabic'; font-weight: 600; font-display: swap; src: url('/assets/fonts/noto-naskh-arabic-arabic-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Naskh Arabic'; font-weight: 700; font-display: swap; src: url('/assets/fonts/noto-naskh-arabic-arabic-700-normal.woff2') format('woff2'); }
+

@@ -1,0 +1,165 @@
+{
+  "suzuki-alto-vxr": [
+    "/assets/cars/suzuki-alto-vxr/01.jpg",
+    "/assets/cars/suzuki-alto-vxr/02.jpg",
+    "/assets/cars/suzuki-alto-vxr/03.jpg",
+    "/assets/cars/suzuki-alto-vxr/04.jpg",
+    "/assets/cars/suzuki-alto-vxr/05.jpg"
+  ],
+  "suzuki-alto-vxl-ags": [
+    "/assets/cars/suzuki-alto-vxl-ags/01.jpg",
+    "/assets/cars/suzuki-alto-vxl-ags/02.jpg",
+    "/assets/cars/suzuki-alto-vxl-ags/03.jpg",
+    "/assets/cars/suzuki-alto-vxl-ags/04.jpg"
+  ],
+  "suzuki-mehran-vxr": [
+    "/assets/cars/suzuki-mehran-vxr/01.jpg",
+    "/assets/cars/suzuki-mehran-vxr/02.jpg",
+    "/assets/cars/suzuki-mehran-vxr/03.jpg",
+    "/assets/cars/suzuki-mehran-vxr/04.jpg",
+    "/assets/cars/suzuki-mehran-vxr/05.jpg"
+  ],
+  "suzuki-cultus-vxl": [
+    "/assets/cars/suzuki-cultus-vxl/01.jpg",
+    "/assets/cars/suzuki-cultus-vxl/02.jpg",
+    "/assets/cars/suzuki-cultus-vxl/03.jpg",
+    "/assets/cars/suzuki-cultus-vxl/04.jpg",
+    "/assets/cars/suzuki-cultus-vxl/05.jpg"
+  ],
+  "suzuki-wagon-r-vxl": [
+    "/assets/cars/suzuki-wagon-r-vxl/01.jpg",
+    "/assets/cars/suzuki-wagon-r-vxl/02.jpg",
+    "/assets/cars/suzuki-wagon-r-vxl/03.jpg",
+    "/assets/cars/suzuki-wagon-r-vxl/04.jpg",
+    "/assets/cars/suzuki-wagon-r-vxl/05.jpg"
+  ],
+  "suzuki-swift-glx": [
+    "/assets/cars/suzuki-swift-glx/01.jpg",
+    "/assets/cars/suzuki-swift-glx/02.jpg",
+    "/assets/cars/suzuki-swift-glx/03.jpg",
+    "/assets/cars/suzuki-swift-glx/04.jpg",
+    "/assets/cars/suzuki-swift-glx/05.jpg"
+  ],
+  "suzuki-bolan-vx": [
+    "/assets/cars/suzuki-bolan-vx/01.jpg",
+    "/assets/cars/suzuki-bolan-vx/02.jpg",
+    "/assets/cars/suzuki-bolan-vx/03.jpg",
+    "/assets/cars/suzuki-bolan-vx/04.jpg",
+    "/assets/cars/suzuki-bolan-vx/05.jpg"
+  ],
+  "suzuki-ravi": [
+    "/assets/cars/suzuki-ravi/01.jpg",
+    "/assets/cars/suzuki-ravi/02.jpg",
+    "/assets/cars/suzuki-ravi/03.jpg",
+    "/assets/cars/suzuki-ravi/04.jpg",
+    "/assets/cars/suzuki-ravi/05.jpg"
+  ],
+  "toyota-corolla-gli": [
+    "/assets/cars/toyota-corolla-gli/01.jpg",
+    "/assets/cars/toyota-corolla-gli/02.jpg",
+    "/assets/cars/toyota-corolla-gli/03.jpg",
+    "/assets/cars/toyota-corolla-gli/04.jpg",
+    "/assets/cars/toyota-corolla-gli/05.jpg"
+  ],
+  "toyota-corolla-altis": [
+    "/assets/cars/toyota-corolla-altis/01.jpg",
+    "/assets/cars/toyota-corolla-altis/02.jpg",
+    "/assets/cars/toyota-corolla-altis/03.jpg",
+    "/assets/cars/toyota-corolla-altis/04.jpg",
+    "/assets/cars/toyota-corolla-altis/05.jpg"
+  ],
+  "toyota-yaris-ativ": [
+    "/assets/cars/toyota-yaris-ativ/01.jpg",
+    "/assets/cars/toyota-yaris-ativ/02.jpg",
+    "/assets/cars/toyota-yaris-ativ/03.jpg",
+    "/assets/cars/toyota-yaris-ativ/04.jpg",
+    "/assets/cars/toyota-yaris-ativ/05.jpg"
+  ],
+  "toyota-vitz-hybrid": [
+    "/assets/cars/toyota-vitz-hybrid/01.jpg",
+    "/assets/cars/toyota-vitz-hybrid/02.jpg",
+    "/assets/cars/toyota-vitz-hybrid/03.jpg",
+    "/assets/cars/toyota-vitz-hybrid/04.jpg",
+    "/assets/cars/toyota-vitz-hybrid/05.jpg"
+  ],
+  "toyota-passo-x": [
+    "/assets/cars/toyota-passo-x/01.jpg",
+    "/assets/cars/toyota-passo-x/02.jpg",
+    "/assets/cars/toyota-passo-x/03.jpg",
+    "/assets/cars/toyota-passo-x/04.jpg",
+    "/assets/cars/toyota-passo-x/05.jpg"
+  ],
+  "toyota-prado-tx": [
+    "/assets/cars/toyota-prado-tx/01.jpg",
+    "/assets/cars/toyota-prado-tx/02.jpg",
+    "/assets/cars/toyota-prado-tx/03.jpg",
+    "/assets/cars/toyota-prado-tx/04.jpg",
+    "/assets/cars/toyota-prado-tx/05.jpg"
+  ],
+  "toyota-hilux-revo": [
+    "/assets/cars/toyota-hilux-revo/01.jpg",
+    "/assets/cars/toyota-hilux-revo/02.jpg",
+    "/assets/cars/toyota-hilux-revo/03.jpg",
+    "/assets/cars/toyota-hilux-revo/04.jpg",
+    "/assets/cars/toyota-hilux-revo/05.jpg"
+  ],
+  "toyota-fortuner-legender": [
+    "/assets/cars/toyota-fortuner-legender/01.jpg",
+    "/assets/cars/toyota-fortuner-legender/02.jpg"
+  ],
+  "honda-city-1-2": [
+    "/assets/cars/honda-city-1-2/01.jpg",
+    "/assets/cars/honda-city-1-2/02.jpg",
+    "/assets/cars/honda-city-1-2/03.jpg",
+    "/assets/cars/honda-city-1-2/04.jpg",
+    "/assets/cars/honda-city-1-2/05.jpg"
+  ],
+  "honda-civic-oriel": [
+    "/assets/cars/honda-civic-oriel/01.jpg",
+    "/assets/cars/honda-civic-oriel/02.jpg",
+    "/assets/cars/honda-civic-oriel/03.jpg",
+    "/assets/cars/honda-civic-oriel/04.jpg",
+    "/assets/cars/honda-civic-oriel/05.jpg"
+  ],
+  "honda-br-v": [
+    "/assets/cars/honda-br-v/01.jpg",
+    "/assets/cars/honda-br-v/02.jpg",
+    "/assets/cars/honda-br-v/03.jpg",
+    "/assets/cars/honda-br-v/04.jpg",
+    "/assets/cars/honda-br-v/05.jpg"
+  ],
+  "honda-vezel-hybrid": [
+    "/assets/cars/honda-vezel-hybrid/01.jpg",
+    "/assets/cars/honda-vezel-hybrid/02.jpg",
+    "/assets/cars/honda-vezel-hybrid/03.jpg",
+    "/assets/cars/honda-vezel-hybrid/04.jpg",
+    "/assets/cars/honda-vezel-hybrid/05.jpg"
+  ],
+  "kia-sportage-awd": [
+    "/assets/cars/kia-sportage-awd/01.jpg",
+    "/assets/cars/kia-sportage-awd/02.jpg",
+    "/assets/cars/kia-sportage-awd/03.jpg",
+    "/assets/cars/kia-sportage-awd/04.jpg",
+    "/assets/cars/kia-sportage-awd/05.jpg"
+  ],
+  "hyundai-tucson-fwd": [
+    "/assets/cars/hyundai-tucson-fwd/01.jpg",
+    "/assets/cars/hyundai-tucson-fwd/02.jpg",
+    "/assets/cars/hyundai-tucson-fwd/03.jpg",
+    "/assets/cars/hyundai-tucson-fwd/04.jpg",
+    "/assets/cars/hyundai-tucson-fwd/05.jpg"
+  ],
+  "mg-hs-essence": [
+    "/assets/cars/mg-hs-essence/01.jpg",
+    "/assets/cars/mg-hs-essence/02.jpg",
+    "/assets/cars/mg-hs-essence/03.jpg",
+    "/assets/cars/mg-hs-essence/04.jpg",
+    "/assets/cars/mg-hs-essence/05.jpg"
+  ],
+  "daihatsu-mira-es": [
+    "/assets/cars/daihatsu-mira-es/01.jpg",
+    "/assets/cars/daihatsu-mira-es/02.jpg",
+    "/assets/cars/daihatsu-mira-es/03.jpg",
+    "/assets/cars/daihatsu-mira-es/04.jpg"
+  ]
+}

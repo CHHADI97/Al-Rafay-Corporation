@@ -1,0 +1,69 @@
+<main id="main">
+  <section class="page-head">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/" data-i18n="nav.home">Home</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page" data-i18n="nav.cars">Cars</span>
+      </nav>
+      <h1 data-i18n="inventory.title">Cars available at our yard</h1>
+      <p data-i18n="inventory.subtitle">Filter by company, model, budget, year, fuel or transmission. Prices in Pakistani Rupees.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:34px">
+    <div class="container inventory-layout">
+      <aside class="filters" id="filters">
+        <div class="filters__head">
+          <h2 class="filters__title" data-i18n="common.filter">Filter</h2>
+          <button class="filters__reset" type="button" data-clear="1" data-i18n="inventory.clearAll">Clear all</button>
+        </div>
+        <div id="filters-body"></div>
+      </aside>
+
+      <div>
+        <div class="toolbar">
+          <label class="search-field">
+            <span class="sr-only" data-i18n="common.search">Search</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+            <input id="inventory-search" type="search" placeholder="Search by name, variant or colour" data-i18n-attr="placeholder:inventory.keyword" />
+          </label>
+          <button class="btn btn-light filters__toggle" type="button" id="filters-toggle" aria-expanded="false" aria-controls="filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            <span data-i18n="common.filter">Filter</span>
+          </button>
+          <select class="select" id="inventory-sort" aria-label="Sort cars">
+            <option value="newest" data-i18n="inventory.sortNewest">Newest first</option>
+            <option value="price-asc" data-i18n="inventory.sortPriceAsc">Price: low to high</option>
+            <option value="price-desc" data-i18n="inventory.sortPriceDesc">Price: high to low</option>
+            <option value="year-desc" data-i18n="inventory.sortYearDesc">Model year: newest</option>
+            <option value="mileage-asc" data-i18n="inventory.sortMileageAsc">Mileage: lowest</option>
+            <option value="featured" data-i18n="common.featured">Featured</option>
+          </select>
+          <span class="toolbar__count" id="result-count"></span>
+        </div>
+
+        <div class="active-chips" id="active-filters"></div>
+        <div class="grid grid--cars" id="inventory-grid"><!--STATIC-CARS--></div>
+        <div style="text-align:center;margin-top:30px">
+          <button class="btn btn-outline" type="button" id="load-more" hidden data-i18n="inventory.loadMore">Load more cars</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--crimson" id="sell">
+    <div class="container">
+      <div class="cta-band" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.24)">
+        <div>
+          <h3 style="color:#fff" data-i18n="home.sellTitle">Want to sell or exchange your car?</h3>
+          <p style="color:rgba(255,255,255,.86)" data-i18n="home.sellBody">Send us the details and either owner will call you back with a fair market price the same day.</p>
+        </div>
+        <div class="cta-band__actions">
+          <a class="btn btn-lg btn-light" data-sell-link href="#" target="_blank" rel="noopener" data-i18n="home.sellCta">Get a price on WhatsApp</a>
+          <a class="btn btn-lg btn-ghost" href="/contact" data-i18n="nav.contact">Contact</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

@@ -1,28 +1,110 @@
-# AL RAFAY CORPORATION
+# الرافع کارپوریشن اینڈ ٹریڈرز — Al Rafay Corporation & Traders
 
-A bespoke, responsive English-language showroom website for Islamabad, built with Node.js and browser-native HTML, CSS and JavaScript. No framework or package installation is required.
+Bilingual (اردو + English) website and admin panel for a new & used car dealership
+on Lethrar Road, Thanda Pani (Harno), Islamabad.
 
-## Run locally
+- Public site: car inventory with search, filters and sorting, per-car pages with photo
+  galleries, owners' click-to-call / WhatsApp buttons, Google Map, floating WhatsApp button.
+- Admin panel at `/admin`: **Google sign-in only**, one allowed Gmail address, full control of
+  cars, photos, prices, featured/sold flags, owners, business text, location and logo.
+- Stack: Node.js + Express, server-rendered HTML shells, vanilla ES modules, and
+  **Supabase** (Postgres + Auth + Storage) as the database, login and image store.
+- Runs with **zero configuration** in demo mode, so the site can be reviewed before
+  Supabase is connected.
 
-- Install Node.js 20 or newer.
-- Run `npm start`.
-- Open `http://localhost:4173`.
-- On the first start, the password-only owner login is provisioned with a **random one-time password** printed to the server terminal. Sign in at `/admin`. Only a salted scrypt password hash is stored. Change the initial password in **Admin → Security**.
-- Or set `ADMIN_PASSWORD` (12+ characters) in a private `.env` file / hosting environment *before the first start*. The optional `.env.example` documents configuration. Do not publish real secrets in Git.
+## Quick start
 
-The admin dashboard also supports car inventory and image management, site/owner/location edits, password changes, and a private contact-form inbox. Uploaded photos, dashboard data and the initial generated password hash live under the ignored `storage/` directory; keep that directory persistent in production and back it up securely. Files uploaded through the dashboard are kept in ignored `public/uploads/`.
+```bash
+npm install
+npm start             # http://localhost:4173  (admin at /admin)
+npm run check:all     # 138 automated checks — API, pages, rendering, dashboard
+```
 
-## Owner checklist before going live
+Demo mode (no `.env`) keeps its data in `storage/demo-data.json`, seeded from `seed/*.json`,
+and signs the admin in with the password `alrafay123` (change with `DEMO_ADMIN_PASSWORD`).
 
-- This initial build contains **demo inventory and indicative demo prices**. Replace or remove every sample listing, photo, mileage, condition and price in the admin dashboard before publishing. Confirm availability and pricing directly with the dealership.
-- Confirm names, phone/WhatsApp numbers, location pin, Google Maps directions, and all vehicle information. Seed contact details reflect the latest owner-supplied message.
-- Contact-form messages are stored privately in the dashboard inbox. They are **not emailed or texted automatically**; add and test an email/SMS provider if notifications are required.
-- Run behind an HTTPS reverse proxy, use a unique strong owner password, keep `storage/` durable/private, restrict who can access backups, and set up monitoring and backups before production use. For multi-instance deployments, use shared durable storage and a shared session store (the included in-memory sessions are intended for one instance).
+## Going live with Supabase (Google login + cloud database)
 
-## Features
+1. Create a project at [supabase.com](https://supabase.com).
+2. SQL Editor → paste and run `supabase/schema.sql` (creates every table, the
+   `car-images` Storage bucket, Row Level Security policies and the site settings).
+3. Authentication → Providers → enable **Google** (add the Google client ID/secret from
+   the Google Cloud console) and set the Site URL + Redirect URL to
+   `https://your-domain/admin`.
+4. Project Settings → API → copy the URL and anon key into `.env`
+   (see `.env.example`). Restart the server — the log then prints `mode: supabase`.
+5. Sign in at `/admin` with the Gmail address in `ADMIN_EMAIL`
+   (`abdulhadicreates@gmail.com`). Change it any time under **Settings → Admin email**.
+6. `npm run seed` uploads the demo inventory to Supabase so the dashboard is not empty.
+   Delete or edit those sample cars before publishing.
 
-- English landing page for a premium Pakistan-focused pre-owned car dealership; local PKR pricing display, sample Suzuki Alto/Mehran, Toyota Corolla XLi/GLi, Yaris and SUV categories.
-- Live brand/model/price/year/condition search and responsive car details.
-- Secure owner login with random first-run password, scrypt hashing, HttpOnly/SameSite cookies, CSRF tokens, login rate limiting, and owner-only inventory/site/upload/inbox/password APIs.
-- Admin CRUD, local photo upload, publishing controls, editable owner/business details, and a private contact inquiry inbox.
-- Responsive layouts, light scroll/hover/hero motion with reduced-motion support, phone/WhatsApp actions, embedded Google Map and driving directions.
+`.env` is ignored by Git — never commit real keys.
+
+## Everyday admin tasks (all mobile friendly)
+
+| Task | Where |
+| --- | --- |
+| Add / edit / delete a car, price, mileage, specs, description | Cars → car → Save |
+| Mark sold / available, choose featured cars | Cars list (✓ / ★ switches) or the editor |
+| Upload, reorder, delete photos (first photo = cover) | Car editor → Photos (drag & drop, up to 12 at a time) |
+| Change business name, tagline, address, hours, hero text | Settings → Business |
+| Paste a new Google Maps link **or** embed code | Settings → Location |
+| Change owners, phone numbers, WhatsApp numbers | Content → Owners |
+| Edit stats / "why us" cards / FAQs | Content |
+| Replace the logo | Settings → Logo |
+| Change the single admin Gmail address | Settings → Admin |
+| Read contact-form enquiries | Messages |
+
+Changes appear on the public site immediately (the JSON API is cached for at most
+20 seconds and the pages re-render from it).
+
+## Project layout
+
+```
+src/                Express app, routes, validation, Supabase/demo data layer
+  server.js         app + security headers + startup
+  config.js         .env loading and mode detection
+  data.js           all reads/writes (Supabase, or the offline demo store)
+  routes/pages.js   HTML shells, SEO injection, sitemap, robots, manifest
+  routes/public.js  public JSON API      routes/admin.js  admin API
+public/             everything served to the browser
+  index|cars|car|contact|404.html   generated shells — edit tools/pages/** instead
+  admin/index.html  dashboard shell
+  js/               core.js (runtime) · templates.js · per-page modules · admin.js
+  css/              site.css · fonts.css · admin.css
+  assets/           photos, fonts, icons, logo placeholder
+tools/              build-pages.mjs, build-seed.mjs, prepare-images.mjs, seed.mjs, check.mjs
+seed/               demo inventory + site content (JSON)
+supabase/schema.sql database, storage bucket and RLS policies
+storage/            demo store (git-ignored, created on first start)
+```
+
+`npm run build:pages` regenerates `public/*.html` from `tools/pages/**` — never hand-edit
+the generated shells.
+
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm start` / `npm run dev` | run the server (dev watches for changes) |
+| `npm run check` | static audit (translations, hooks, photo files) + end-to-end API & page test |
+| `npm run check:browser` | renders every page in a simulated browser and checks the markup, filters, gallery and Urdu switch |
+| `npm run check:admin` | drives the real dashboard: sign-in, car edit/create, photo upload, settings, inbox |
+| `npm run check:all` | all three suites — run this before deploying |
+| `npm run seed` | push `seed/*.json` to Supabase (needs credentials) |
+| `npm run build:pages` | rebuild the HTML shells |
+| `npm run prepare-images` | optimise source photos into `public/assets/cars/**` |
+| `npm run icons` | regenerate the PNG app icons from `public/favicon.svg` |
+
+## Before you publish
+
+- Replace the **placeholder images and demo prices** with the real cars; the current
+  inventory is sample data for review.
+- Upload the real logo (the header/footer currently show a temporary "97 Group" badge).
+- Confirm the Google Map pin, phone numbers and opening hours in Settings.
+- Serve over HTTPS behind your host's proxy; keep `.env` secret.
+- Keep `storage/` persistent (demo mode) or your Supabase project backed up.
+
+---
+
+Website designed by **Abdul Hadi** · ویب سائٹ ڈیزائن: عبدالہادی
