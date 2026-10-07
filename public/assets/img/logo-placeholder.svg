@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="97 Group">
+  <defs>
+    <linearGradient id="arf-badge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e11d48" />
+      <stop offset="0.55" stop-color="#be123c" />
+      <stop offset="1" stop-color="#881337" />
+    </linearGradient>
+    <linearGradient id="arf-sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35" />
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="36" fill="url(#arf-badge)" />
+  <rect width="160" height="160" rx="36" fill="url(#arf-sheen)" />
+  <text x="80" y="88" text-anchor="middle" font-family="Outfit, Segoe UI, Arial, sans-serif" font-size="76" font-weight="800" fill="#ffffff">97</text>
+  <text x="80" y="126" text-anchor="middle" font-family="Outfit, Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="7" fill="#ffe4e6">GROUP</text>
+</svg>

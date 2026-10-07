@@ -1,11 +1,140 @@
 {
-  "tagline": "Premium Cars. Trusted Deals.",
-  "heroDescription": "A considered collection of Pakistan's most-loved cars, with a more personal way to find the one that feels right.",
-  "about": "At AL RAFAY CORPORATION, finding your next car starts with a real conversation. From practical Suzuki favourites to a Corolla, Yaris or capable SUV, we're here to help Islamabad drivers explore the right options with confidence.",
-  "ownerName": "CH NAEEM AKHTER",
-  "ownerPhone": "03155521697",
-  "secondOwnerName": "CH FAHEEM AKHTER",
-  "secondOwnerPhone": "03000119297",
-  "location": "Lethrar Road, Thanda Pani, Nilore, Islamabad, Pakistan",
-  "city": "Islamabad"
+  "settings": {
+    "businessNameEn": "Al Rafay Corporation & Traders",
+    "businessNameUr": "الرافع کارپوریشن اینڈ ٹریڈرز",
+    "shortName": "Al Rafay",
+    "logoUrl": "",
+    "logoAltUrl": "",
+    "taglineEn": "New & used cars — bought and sold with confidence in Islamabad",
+    "taglineUr": "اسلام آباد میں نئی اور پرانی گاڑیوں کی قابلِ اعتماد خرید و فروخت",
+    "heroTitleEn": "Find the car that fits your life",
+    "heroTitleUr": "اپنی پسند کی گاڑی، بھروسے کے ساتھ",
+    "heroSubtitleEn": "Suzuki, Toyota, Honda, Kia, Hyundai and more — inspected stock, clear pricing and paperwork handled on the spot at Thanda Pani, Lethrar Road, Islamabad.",
+    "heroSubtitleUr": "سوزوکی، ٹویوٹا، ہونڈا، کیا، ہنڈائی اور دیگر — مکمل جانچ شدہ گاڑیاں، صاف شفاف قیمت اور موقع پر کاغذات کی سہولت، ٹھنڈا پانی، لتراڑ روڈ، اسلام آباد۔",
+    "aboutEn": "Al Rafay Corporation & Traders is a family-run car dealership on Lethrar Road, Islamabad. We buy and sell both new and pre-owned vehicles, help you compare honest options within your budget, and complete the transfer paperwork for you — no hidden charges, no surprises.",
+    "aboutUr": "الرافع کارپوریشن اینڈ ٹریڈرز لتراڑ روڈ اسلام آباد پر ایک خاندانی کاروبار ہے۔ ہم نئی اور پرانی دونوں قسم کی گاڑیاں خریدتے اور بیچتے ہیں، آپ کے بجٹ میں سچے آپشنز دکھاتے ہیں اور ٹرانسفر کے تمام کاغذات خود مکمل کرواتے ہیں — کوئی چھپی ہوئی فیس نہیں، کوئی دھوکہ نہیں۔",
+    "addressEn": "Thanda Pani (Harno), Lethrar Road, Islamabad, Pakistan",
+    "addressUr": "ٹھنڈا پانی (ہرنو)، لتراڑ روڈ، اسلام آباد، پاکستان",
+    "cityEn": "Islamabad",
+    "cityUr": "اسلام آباد",
+    "addressShortEn": "Lethrar Road, Thanda Pani, Islamabad",
+    "addressShortUr": "لتراڑ روڈ، ٹھنڈا پانی، اسلام آباد",
+    "mapEmbedUrl": "https://www.google.com/maps?q=Thanda+Pani+Lethrar+Road+Islamabad&output=embed",
+    "mapLink": "https://www.google.com/maps/search/?api=1&query=Thanda+Pani+Lethrar+Road+Islamabad",
+    "mapEmbedType": "src",
+    "whatsappNumber": "923155521697",
+    "email": "",
+    "hoursEn": "Monday – Saturday: 9:00 am – 8:00 pm",
+    "hoursUr": "پیر تا ہفتہ: صبح 9 بجے سے رات 8 بجے تک",
+    "facebookUrl": "",
+    "instagramUrl": "",
+    "youtubeUrl": "",
+    "footerNoteEn": "Prices are negotiable and subject to final inspection. Please confirm availability on call before travelling.",
+    "footerNoteUr": "قیمتیں قابلِ گفتگو ہیں اور مکمل معائنے سے مشروط ہیں۔ تشریف لانے سے پہلے کال پر دستیابی کی تصدیق کر لیں۔",
+    "creditsEn": "Website designed by Abdul Hadi",
+    "creditsUr": "ویب سائٹ ڈیزائن: عبدالہادی",
+    "adminEmail": "abdulhadicreates@gmail.com"
+  },
+  "owners": [
+    {
+      "nameEn": "Chaudhry Naeem Akhtar",
+      "nameUr": "چوہدری نعیم اختر",
+      "roleEn": "Owner & Sales",
+      "roleUr": "مالک و سیل",
+      "phone": "03155521697",
+      "whatsapp": "923155521697",
+      "showOnSite": true
+    },
+    {
+      "nameEn": "Chaudhry Faheem Akhtar",
+      "nameUr": "چوہدری فہیم اختر",
+      "roleEn": "Owner & Purchasing",
+      "roleUr": "مالک و خریداری",
+      "phone": "03000119297",
+      "whatsapp": "923000119297",
+      "showOnSite": true
+    }
+  ],
+  "stats": [
+    {
+      "value": 2000,
+      "suffix": "+",
+      "labelEn": "Cars sold",
+      "labelUr": "گاڑیاں فروخت"
+    },
+    {
+      "value": 20,
+      "suffix": "",
+      "labelEn": "Years in business",
+      "labelUr": "سال کا تجربہ"
+    },
+    {
+      "value": 500,
+      "suffix": "+",
+      "labelEn": "Happy customers",
+      "labelUr": "مطمئن گاہک"
+    },
+    {
+      "value": 100,
+      "suffix": "%",
+      "labelEn": "Documentation support",
+      "labelUr": "کاغذات کی معاونت"
+    }
+  ],
+  "whyUs": [
+    {
+      "icon": "shield",
+      "titleEn": "Every car is inspected",
+      "titleUr": "ہر گاڑی مکمل جانچ شدہ",
+      "bodyEn": "Engine, suspension, tyres and body are checked before a car reaches our yard. You are told exactly what has been repaired or replaced.",
+      "bodyUr": "گاڑی ہمارے پلاٹ پر آنے سے پہلے انجن، سسپنشن، ٹائر اور باڈی کی مکمل جانچ ہوتی ہے۔ جو پرزہ بدلا یا مرمت ہوا ہو، وہ صاف بتایا جاتا ہے۔"
+    },
+    {
+      "icon": "tag",
+      "titleEn": "Transparent pricing",
+      "titleUr": "صاف شفاف قیمت",
+      "bodyEn": "The price you see is the price we discuss. No hidden fees, no pressure — and a fair offer if you trade in your current car.",
+      "bodyUr": "جو قیمت نظر آتی ہے، بات اُسی پر ہوتی ہے۔ کوئی چھپی ہوئی فیس نہیں، کوئی دباؤ نہیں — اور آپ کی پرانی گاڑی کے بدلے مناسب آفر۔"
+    },
+    {
+      "icon": "file",
+      "titleEn": "Paperwork we handle for you",
+      "titleUr": "کاغذات ہم خود مکمل کریں",
+      "bodyEn": "Transfer, registration and token tax guidance is handled by our team so you drive away without chasing offices.",
+      "bodyUr": "ٹرانسفر، رجسٹریشن اور ٹوکن ٹیکس کی رہنمائی ہماری ٹیم خود کرتی ہے تاکہ آپ کو دفاتر کے چکر نہ لگانے پڑیں۔"
+    },
+    {
+      "icon": "wrench",
+      "titleEn": "After-sale support",
+      "titleUr": "فروخت کے بعد بھی سہارا",
+      "bodyEn": "Trip before a long journey, an oil change reminder or a spare part — call either owner any time after the sale.",
+      "bodyUr": "لمبے سفر سے پہلے چیکنگ، آئل چینج کی یاد دہانی یا اسپیئر پارٹ — فروخت کے بعد بھی کسی بھی وقت ہم سے رابطہ کریں۔"
+    }
+  ],
+  "faqs": [
+    {
+      "questionEn": "Can I sell my own car to Al Rafay Corporation?",
+      "questionUr": "کیا میں اپنی گاڑی الرافع کارپوریشن کو بیچ سکتا ہوں؟",
+      "answerEn": "Yes. Bring the car, its documents and your CNIC to Thanda Pani. We inspect it, quote a fair market price the same day and complete the transfer paperwork if you accept.",
+      "answerUr": "جی ہاں۔ گاڑی، کاغذات اور شناختی کارڈ لے کر ٹھنڈا پانی تشریف لائیں۔ ہم گاڑی چیک کر کے اسی دن مناسب قیمت بتاتے ہیں اور آپ کی رضامندی پر تمام کاغذات مکمل کر دیتے ہیں۔"
+    },
+    {
+      "questionEn": "Do you accept a car exchange with a partial payment?",
+      "questionUr": "کیا پرانی گاڑی کے بدلے نئی گاڑی اور کچھ رقم کی سہولت ہے؟",
+      "answerEn": "Yes, exchange deals are welcome. We value your car in front of you and adjust it against the new one so only the balance is payable.",
+      "answerUr": "جی ہاں، ایکسچینج ڈیل دستیاب ہے۔ ہم آپ کے سامنے گاڑی کی ویلیو لگاتے ہیں اور وہ نئی گاڑی کی قیمت میں ایڈجسٹ کر دیتے ہیں، صرف فرق ادا کرنا ہوتا ہے۔"
+    },
+    {
+      "questionEn": "Can I get a car on instalments?",
+      "questionUr": "کیا گاڑی انسٹالمنٹ پر مل سکتی ہے؟",
+      "answerEn": "We arrange instalment and bank financing through our partner network. Call Chaudhry Naeem Akhtar on 0315 5521697 with your budget and the car you want.",
+      "answerUr": "ہم اپنے پارٹنر نیٹ ورک کے ذریعے انسٹالمنٹ اور بینک فنانس کرواتے ہیں۔ اپنا بجٹ اور پسند کی گاڑی بتا کر چوہدری نعیم اختر کو 0315 5521697 پر کال کریں۔"
+    },
+    {
+      "questionEn": "How do I check a car before travelling to the dealership?",
+      "questionUr": "پلاٹ پر آنے سے پہلے گاڑی کیسے دیکھ سکتا ہوں؟",
+      "answerEn": "Open the car page on this website for photos, price and specs, then tap the WhatsApp button. We send extra photos and video of the exact car, including the meter and engine, before you visit.",
+      "answerUr": "اس ویب سائٹ پر گاڑی کا صفحہ کھول کر تصاویر، قیمت اور تفصیلات دیکھیں، پھر واٹس ایپ بٹن دبائیں۔ تشریف لانے سے پہلے ہم اُسی گاڑی کی مزید تصاویر اور ویڈیو، میٹر اور انجن سمیت بھیج دیتے ہیں۔"
+    }
+  ]
 }
