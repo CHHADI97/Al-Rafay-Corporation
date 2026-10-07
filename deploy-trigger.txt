@@ -1,0 +1,1 @@
+Supabase environment variables updated
