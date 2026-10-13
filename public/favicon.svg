@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect width="96" height="96" rx="22" fill="#111113"/><path d="M23 32V22h50v10H55v42H42V32z" fill="#ef3e36"/><text x="48" y="82" text-anchor="middle" fill="#f6f4f0" font-family="Arial,sans-serif" font-weight="900" font-size="16" letter-spacing="4">GROUP</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#161518"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#f08a24" stroke-width="3"/>
+  <path d="M32 15 L45 47 H39.5 L36.6 39.5 H27.4 L24.5 47 H19 Z M32 27.5 L29.2 34.5 H34.8 Z" fill="#fff4e3"/>
+  <circle cx="47" cy="17" r="4" fill="#c8322b"/>
+</svg>

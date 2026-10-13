@@ -1,9 +1,9 @@
 {
-  "name": "al-rafay-corporation",
-  "version": "1.0.0",
+  "name": "appetizer-fast-foods",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "AL RAFAY CORPORATION — premium pre-owned cars in Islamabad",
+  "description": "Appetizer Fast Foods — menu, order-via-WhatsApp, and secure admin dashboard for Nilore, Islamabad.",
   "scripts": {
     "start": "node server.mjs",
     "dev": "node --watch server.mjs"

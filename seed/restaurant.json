@@ -1,0 +1,20 @@
+{
+  "name": "Appetizer Fast Foods",
+  "tagline": "Fresh Bites. Great Taste. Refresh Your Day!",
+  "heroDescription": "Welcome to Appetizer Fast Foods in Nilore, Islamabad, where burgers, shawarma, chaat, snacks and cold refreshments are made fresh for your day.",
+  "about": "Appetizer Fast Foods serves fast food and refreshments on Lehtrar Road in Nilore, Islamabad. Call or message us on WhatsApp to order, choose pickup, or ask about home delivery in your area.",
+  "contactPerson": "Naveed Ahmad",
+  "phone": "+92 301 5136842",
+  "whatsapp": "+92 301 5136842",
+  "location": "Nilore, Islamabad, Lehtrar Road, Pakistan",
+  "city": "Islamabad",
+  "mapsQuery": "Appetizer Fast Foods Nilore Islamabad Lehtrar Road",
+  "delivery": {
+    "available": true,
+    "charge": null,
+    "minimumOrder": null,
+    "areas": "",
+    "estimatedTime": "",
+    "note": ""
+  }
+}

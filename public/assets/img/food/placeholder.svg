@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Photo coming soon">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="75%">
+      <stop offset="0" stop-color="#2a2629"/>
+      <stop offset="1" stop-color="#121113"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)"/>
+  <g transform="translate(400 280)" fill="none" stroke="#f08a24" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <path d="M-88 -92 H88 L66 98 Q64 116 44 116 H-44 Q-64 116 -66 98 Z"/>
+    <path d="M-100 -92 H100"/>
+    <path d="M-30 -140 Q-42 -170 -20 -190 M10 -140 Q-2 -170 18 -196" stroke="#c8322b" stroke-width="7"/>
+    <path d="M-62 -24 H62" stroke="#fff4e3" stroke-width="6" opacity="0.6"/>
+  </g>
+  <text x="400" y="500" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#fff4e3" opacity="0.75" letter-spacing="4">PHOTO COMING SOON</text>
+</svg>

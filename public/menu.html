@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0c0e">
+  <meta name="description" content="Full menu at Appetizer Fast Foods, Nilore, Islamabad: Zinger Burger, Anda Burger, Shawarma, Fruit Chaat, Chana Chaat, Samosa Plate, Dahi Baray, Chicken Seekh and Milkshakes. Home delivery available.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Menu · Appetizer Fast Foods">
+  <meta property="og:description" content="Burgers, shawarma, chaat, snacks, BBQ & chicken and refreshments. Order online via WhatsApp.">
+  <meta property="og:image" content="/assets/img/food/zinger-burger.jpg">
+  <title>Menu · Appetizer Fast Foods, Nilore Islamabad</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/js/common.js" defer></script>
+  <script src="/js/menu.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Appetizer Fast Foods — home">
+        <img src="/assets/img/food/logo.svg" alt="" width="46" height="46">
+        <span class="brand-text"><b>APPETIZER</b><small>FAST FOODS</small></span>
+      </a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu"><span></span><span></span></button>
+      <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/menu" aria-current="page">Menu</a>
+        <a class="nav-link" href="/contact">Contact &amp; Order</a>
+        <a class="btn btn-small nav-mobile-cta" href="/contact#order-form">Order Now</a>
+      </nav>
+      <a class="btn btn-small header-cta" href="/contact#order-form">Proceed to Order</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="page-hero">
+      <div class="content-width page-hero-row">
+        <div>
+          <p class="eyebrow">Our menu</p>
+          <h1>Crafted for <em>every</em> craving.</h1>
+          <p>Burgers, shawarma, chaat, snacks, BBQ &amp; chicken and refreshments. Pick a quantity and choose <strong>Order This Item</strong>, or build a full order and send it to us on WhatsApp.</p>
+        </div>
+        <p class="delivery-badge"><span class="badge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span>Home Delivery Available</p>
+      </div>
+    </section>
+
+    <section class="menu-main" aria-labelledby="menu-heading">
+      <div class="content-width">
+        <h2 id="menu-heading" class="visually-hidden">Food menu</h2>
+        <div class="menu-toolbar">
+          <div class="search-field">
+            <label for="menu-search">Search the menu</label>
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input id="menu-search" type="search" placeholder="Search burgers, shawarma, chaat…" autocomplete="off" enterkeyhint="search">
+          </div>
+          <div class="category-filters" role="group" aria-label="Filter by category" id="category-filters"></div>
+        </div>
+        <div class="results-line"><p id="results-count" aria-live="polite">Loading the menu…</p><p>Prices in PKR · “Price to be confirmed” until the restaurant confirms them</p></div>
+
+        <div class="delivery-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.6 7.2 16.9l.9-5.4-3.9-3.8 5.4-.8z"/></svg>
+          <p><strong>Home Delivery Available.</strong> Delivery charges, delivery areas and estimated arrival time are confirmed with you on WhatsApp.</p>
+        </div>
+
+        <div id="menu-sections"></div>
+        <div class="empty-state" id="menu-empty" hidden>
+          <h3>Nothing matched that search.</h3>
+          <p>Try another word or pick “All”.</p>
+          <button class="btn btn-small" id="clear-menu-filters" type="button">Show the full menu</button>
+        </div>
+
+        <div class="menu-cta reveal">
+          <p class="eyebrow">Ready when you are</p>
+          <h2>Ready to order?</h2>
+          <p>Add your items, choose delivery or pickup and send your order to Naveed Ahmad on WhatsApp. Nothing is confirmed until the restaurant replies.</p>
+          <div class="hero-actions">
+            <a class="btn" href="/contact#order-form">Proceed to Order <span class="btn-icon-arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" data-href="tel" href="tel:+923015136842">Call Now</a>
+          </div>
+        </div>
+        <p class="fine-print" style="margin-top: 26px; color: var(--muted);">Descriptions are general. Ask us on WhatsApp for ingredient details before you order.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="basket-bar" id="basket-bar" role="region" aria-label="Your order" aria-live="polite" hidden>
+    <div class="basket-bar-text">
+      <b><span class="basket-count" id="basket-count">0</span>items in your order</b>
+      <span id="basket-names"></span>
+    </div>
+    <a class="btn btn-small" href="/contact#order-form">Proceed to Order</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="content-width">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/img/food/logo.svg" alt="" width="64" height="64" loading="lazy">
+          <h2>APPETIZER FAST FOODS</h2>
+          <p>Fast food and refreshments in Nilore, Islamabad. Fresh bites. Great taste.</p>
+        </div>
+        <nav aria-label="Footer">
+          <h3>Quick links</h3>
+          <ul class="footer-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/menu">Menu</a></li>
+            <li><a href="/contact">Contact &amp; Order</a></li>
+            <li><a href="/contact#order-form">Order online</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h3>Contact</h3>
+          <div class="footer-contact">
+            <div><span>Contact person</span><span data-bind="contactPerson">Naveed Ahmad</span></div>
+            <div><span>Call</span><a data-href="tel" data-bind="phone" href="tel:+923015136842">+92 301 5136842</a></div>
+            <div><span>WhatsApp</span><a data-href="whatsapp" data-bind="whatsapp" href="https://wa.me/923015136842" target="_blank" rel="noopener">+92 301 5136842</a></div>
+            <div><span>Location</span><span data-bind="location">Nilore, Islamabad, Lehtrar Road, Pakistan</span></div>
+          </div>
+        </div>
+        <div>
+          <h3>Delivery</h3>
+          <p data-bind="delivery-status">Home Delivery Available</p>
+          <p style="margin-top: 12px;"><a class="text-link" data-href="maps" href="https://www.google.com/maps/search/?api=1&amp;query=Appetizer+Fast+Foods+Nilore+Islamabad+Lehtrar+Road" target="_blank" rel="noopener">Get directions</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Appetizer Fast Foods. All rights reserved.</span>
+        <span class="developer-credit">Developed by Abdul Hadi</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

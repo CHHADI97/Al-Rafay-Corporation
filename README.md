@@ -1,28 +1,79 @@
-# AL RAFAY CORPORATION
+# Appetizer Fast Foods
 
-A bespoke, responsive English-language showroom website for Islamabad, built with Node.js and browser-native HTML, CSS and JavaScript. No framework or package installation is required.
+Website for **Appetizer Fast Foods — Fast Food and Refreshments**, Nilore, Islamabad (Lehtrar Road, Pakistan). Contact: Naveed Ahmad, +92 301 5136842.
+
+Built with a dependency-free Node.js HTTP server and plain HTML, CSS and JavaScript. No build step.
+
+## Pages
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Home / brand: hero, "Explore Our Menu" and "Order Now", delivery badge, categories, welcome section |
+| `/menu` | Menu by category with search, filters, photos, prices or "Price to be confirmed", availability, quantity and "Order This Item" |
+| `/contact` | Contact details, Call Now, Order on WhatsApp, Get Directions, order form that opens WhatsApp |
+| `/admin` | Owner dashboard (separate, not linked from the public site, `noindex`) |
+
+Every public page carries the footer credit **Developed by Abdul Hadi**.
 
 ## Run locally
 
-- Install Node.js 20 or newer.
-- Run `npm start`.
-- Open `http://localhost:4173`.
-- On the first start, the password-only owner login is provisioned with a **random one-time password** printed to the server terminal. Sign in at `/admin`. Only a salted scrypt password hash is stored. Change the initial password in **Admin → Security**.
-- Or set `ADMIN_PASSWORD` (12+ characters) in a private `.env` file / hosting environment *before the first start*. The optional `.env.example` documents configuration. Do not publish real secrets in Git.
+Requires Node.js 20 or newer.
 
-The admin dashboard also supports car inventory and image management, site/owner/location edits, password changes, and a private contact-form inbox. Uploaded photos, dashboard data and the initial generated password hash live under the ignored `storage/` directory; keep that directory persistent in production and back it up securely. Files uploaded through the dashboard are kept in ignored `public/uploads/`.
+```bash
+cp .env.example .env        # optional; edit values as needed
+npm start                   # http://localhost:4173
+```
 
-## Owner checklist before going live
+Without `ADMIN_PASSWORD`, the first start generates a random owner password and prints it once in the server log. Sign in at `/admin` and change it under Security. Nothing is hardcoded in the source.
 
-- This initial build contains **demo inventory and indicative demo prices**. Replace or remove every sample listing, photo, mileage, condition and price in the admin dashboard before publishing. Confirm availability and pricing directly with the dealership.
-- Confirm names, phone/WhatsApp numbers, location pin, Google Maps directions, and all vehicle information. Seed contact details reflect the latest owner-supplied message.
-- Contact-form messages are stored privately in the dashboard inbox. They are **not emailed or texted automatically**; add and test an email/SMS provider if notifications are required.
-- Run behind an HTTPS reverse proxy, use a unique strong owner password, keep `storage/` durable/private, restrict who can access backups, and set up monitoring and backups before production use. For multi-instance deployments, use shared durable storage and a shared session store (the included in-memory sessions are intended for one instance).
+## Configuration
 
-## Features
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `PORT` | `4173` | HTTP port. Bind address is `0.0.0.0`. |
+| `DATA_DIR` | `./storage` | Persistent data: menu, restaurant, delivery settings, admin password hash, sessions. Keep it persistent and backed up. |
+| `ADMIN_PASSWORD` | unset | Initial owner password, used only when no admin credentials exist yet. Must be 12+ characters. |
+| `TRUST_PROXY` | unset | Set to `true` only behind a trusted reverse proxy that sets `X-Forwarded-For`. Otherwise rate limits can be spoofed. |
 
-- English landing page for a premium Pakistan-focused pre-owned car dealership; local PKR pricing display, sample Suzuki Alto/Mehran, Toyota Corolla XLi/GLi, Yaris and SUV categories.
-- Live brand/model/price/year/condition search and responsive car details.
-- Secure owner login with random first-run password, scrypt hashing, HttpOnly/SameSite cookies, CSRF tokens, login rate limiting, and owner-only inventory/site/upload/inbox/password APIs.
-- Admin CRUD, local photo upload, publishing controls, editable owner/business details, and a private contact inquiry inbox.
-- Responsive layouts, light scroll/hover/hero motion with reduced-motion support, phone/WhatsApp actions, embedded Google Map and driving directions.
+## Admin dashboard
+
+- Server-side session login (scrypt password hashing, HttpOnly `SameSite=Strict` cookie, CSRF tokens on every write).
+- Login rate limiting per IP.
+- Manage menu items: add, edit, delete, category, price, description, availability, published state.
+- Upload, replace or remove item photos. Uploads are validated server-side (type by magic bytes, size limit) and stored in `public/uploads/`.
+- Delivery settings: availability, charge, minimum order, areas, estimated time, note.
+- Contact and location details.
+- Password change.
+
+Prices are empty by default, so the site shows "Price to be confirmed" until real prices are entered. Delivery charges, minimum order, areas and time are also empty until configured; the site then directs customers to WhatsApp to confirm.
+
+## Ordering
+
+The site never claims an order is placed, confirmed, paid or dispatched. The order form validates input, then opens WhatsApp with a pre-filled message (`encodeURIComponent`) to +92 301 5136842. The estimated total appears only when every line has a configured price.
+
+## Project layout
+
+```
+server.mjs              HTTP server, API, admin auth, uploads
+seed/menu.json          Initial menu (9 items, prices unset)
+seed/restaurant.json    Initial contact, location and delivery settings
+public/index.html       Home
+public/menu.html        Menu
+public/contact.html     Contact & Order
+public/admin.html       Admin dashboard
+public/404.html         Not-found page
+public/styles.css       Shared stylesheet (responsive, reduced-motion aware)
+public/js/              Page scripts (common, menu, contact, admin)
+public/assets/img/food/ Photos (lazy-loaded below the fold)
+public/uploads/         Admin-uploaded photos (git-ignored, contents not tracked)
+```
+
+## Deployment notes
+
+- Run `npm start` behind HTTPS. Set `TRUST_PROXY=true` only when a trusted proxy sits in front.
+- Mount a persistent volume for `DATA_DIR` and for `public/uploads/`. Ephemeral disks lose admin changes and photos on redeploy.
+- Replace placeholder content before launch: real item prices, a real Milkshakes photo (currently a placeholder image), and delivery settings.
+
+## Credit
+
+Developed by Abdul Hadi.

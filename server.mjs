@@ -1,7 +1,7 @@
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promises as fs, createReadStream } from 'node:fs';
+import { promises as fs, createReadStream, readFileSync } from 'node:fs';
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -20,7 +20,7 @@ function loadDotEnv() {
 }
 function requireEnvFile() {
   // Kept synchronous and deliberately tiny: no dependency is needed just to read local deployment settings.
-  return process.getBuiltinModule('node:fs').readFileSync(path.join(ROOT, '.env'), 'utf8');
+  return readFileSync(path.join(ROOT, '.env'), 'utf8');
 }
 loadDotEnv();
 
@@ -29,29 +29,37 @@ const SEED_DIR = path.join(ROOT, 'seed');
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(ROOT, 'storage'));
 const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
 const PORT = Math.max(1, Number.parseInt(process.env.PORT || '4173', 10) || 4173);
+// Only trust X-Forwarded-* headers when the app sits behind your own HTTPS reverse proxy.
+const TRUST_PROXY = process.env.TRUST_PROXY === 'true';
 const SESSION_TTL = 8 * 60 * 60 * 1000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const JSON_MIME = 'application/json; charset=utf-8';
+const RESTAURANT_NAME = 'Appetizer Fast Foods';
+const PLACEHOLDER_IMAGE = '/assets/img/food/placeholder.svg';
 const sessions = new Map();
 const loginAttempts = new Map();
-const contactAttempts = new Map();
 
-let cars;
+let menu;
 let site;
-let inquiries;
 let auth;
 
-const initialSiteFields = [
-  'tagline', 'heroDescription', 'about', 'ownerName', 'ownerPhone',
-  'secondOwnerName', 'secondOwnerPhone', 'location', 'city',
-];
-const carStringLimits = {
-  name: 90, brand: 55, model: 80, fuel: 35, transmission: 35,
-  engine: 55, condition: 40, category: 25, description: 1200,
+export const CATEGORIES = ['Burgers', 'Shawarma', 'Chaat & Refreshments', 'Snacks', 'BBQ & Chicken', 'Beverages'];
+const allowedCategories = new Set(CATEGORIES);
+const itemStringLimits = { name: 90, description: 500 };
+const siteTextLimits = {
+  tagline: 120, heroDescription: 300, about: 1200, contactPerson: 80, location: 250, city: 80, mapsQuery: 200,
 };
-const allowedCategories = new Set(['Hatchback', 'Sedan', 'SUV', 'Other']);
-const mimeByExtension = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.json': JSON_MIME, '.woff2': 'font/woff2' };
+const deliveryTextLimits = { estimatedTime: 120, note: 500, areas: 1000 };
+const mimeByExtension = {
+  '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp',
+  '.ico': 'image/x-icon', '.json': JSON_MIME, '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8',
+};
+const clientRoutes = new Map([['/', '/index.html'], ['/menu', '/menu.html'], ['/contact', '/contact.html'], ['/admin', '/admin.html']]);
 
+function httpError(status, message) {
+  return Object.assign(new Error(message), { status });
+}
 async function readJson(file, fallback) {
   try { return JSON.parse(await fs.readFile(file, 'utf8')); }
   catch (error) {
@@ -77,20 +85,17 @@ function passwordMatches(password, record = auth) {
     return expected.length === actual.length && timingSafeEqual(expected, actual);
   } catch { return false; }
 }
+
 async function init() {
   await fs.mkdir(DATA_DIR, { recursive: true, mode: 0o700 });
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  for (const [name, fallback] of [['cars.json', []], ['site.json', {}], ['inquiries.json', []]]) {
+  for (const name of ['menu.json', 'restaurant.json']) {
     const destination = path.join(DATA_DIR, name);
     try { await fs.access(destination); }
-    catch {
-      const initial = name === 'inquiries.json' ? fallback : await readJson(path.join(SEED_DIR, name), fallback);
-      await persistJson(name, initial);
-    }
+    catch { await persistJson(name, await readJson(path.join(SEED_DIR, name), name === 'menu.json' ? [] : {})); }
   }
-  cars = await readJson(path.join(DATA_DIR, 'cars.json'), []);
-  site = await readJson(path.join(DATA_DIR, 'site.json'), {});
-  inquiries = await readJson(path.join(DATA_DIR, 'inquiries.json'), []);
+  menu = await readJson(path.join(DATA_DIR, 'menu.json'), []);
+  site = await readJson(path.join(DATA_DIR, 'restaurant.json'), {});
   auth = await readJson(path.join(DATA_DIR, 'owner-auth.json'), null);
   if (!auth?.salt || !auth?.hash) {
     const configuredPassword = process.env.ADMIN_PASSWORD;
@@ -101,12 +106,12 @@ async function init() {
     auth = makePasswordRecord(initialPassword);
     await persistJson('owner-auth.json', auth);
     if (configuredPassword) {
-      console.log('Owner login is provisioned from ADMIN_PASSWORD. The dashboard is available at /admin.');
+      console.log(`Admin login is provisioned from ADMIN_PASSWORD. The dashboard is available at /admin.`);
     } else {
-      console.log('\n╭─ AL RAFAY CORPORATION · OWNER LOGIN ──────────────────');
-      console.log(`│ Owner password: ${initialPassword}`);
-      console.log('│ Save this now, sign in at /admin, and change it there.');
-      console.log('╰───────────────────────────────────────────────────────\n');
+      console.log(`\n╭─ ${RESTAURANT_NAME.toUpperCase()} · ADMIN LOGIN ─────────────────────`);
+      console.log(`│ Admin password: ${initialPassword}`);
+      console.log('│ Save this now, sign in at /admin, and change it under Security.');
+      console.log('╰───────────────────────────────────────────────────────────\n');
     }
   }
 }
@@ -116,7 +121,7 @@ function setBaseHeaders(res) {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-src https://www.google.com https://maps.google.com");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; img-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-src https://www.google.com https://maps.google.com");
 }
 function sendJson(res, status, data, extraHeaders = {}) {
   if (res.writableEnded) return;
@@ -132,23 +137,24 @@ function sendText(res, status, text, extraHeaders = {}) {
 }
 async function readJsonBody(req, limit = 100 * 1024) {
   const length = Number(req.headers['content-length'] || 0);
-  if (length > limit) throw Object.assign(new Error('Request body too large.'), { status: 413 });
+  if (length > limit) throw httpError(413, 'Request body too large.');
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > limit) throw Object.assign(new Error('Request body too large.'), { status: 413 });
+    if (size > limit) throw httpError(413, 'Request body too large.');
     chunks.push(chunk);
   }
   if (!size) return {};
   let parsed;
   try { parsed = JSON.parse(Buffer.concat(chunks).toString('utf8')); }
-  catch { throw Object.assign(new Error('Invalid JSON.'), { status: 400 }); }
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw Object.assign(new Error('Expected a JSON object.'), { status: 400 });
+  catch { throw httpError(400, 'Invalid JSON.'); }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw httpError(400, 'Expected a JSON object.');
   return parsed;
 }
 function cleanString(value, max, fallback = '') {
-  return typeof value === 'string' ? value.trim().replace(/\0/g, '').slice(0, max) : fallback;
+  // Strip NUL bytes and angle brackets so stored text can never carry markup; the front end also escapes everything it renders.
+  return typeof value === 'string' ? value.replace(/[\0<>]/g, '').trim().slice(0, max) : fallback;
 }
 function normalizePhone(value) {
   return cleanString(value, 30).replace(/[^0-9+()\-\s]/g, '');
@@ -157,51 +163,101 @@ function phoneIsValid(value) {
   const digits = String(value || '').replace(/\D/g, '');
   return digits.length >= 7 && digits.length <= 15;
 }
-function siteForPublic() {
-  return Object.fromEntries(initialSiteFields.map((key) => [key, key.toLowerCase().includes('phone') ? normalizePhone(site?.[key]) : cleanString(site?.[key], key === 'about' ? 1400 : 250)]));
+function toWholeNumber(value, { min, max, label }) {
+  if (value === null || value === '' || value === undefined) return null;
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < min || number > max) throw httpError(400, `Enter a valid ${label}.`);
+  return Math.round(number);
 }
-function safeImagePath(value) {
-  if (typeof value !== 'string' || value.length > 300 || !value.startsWith('/') || value.startsWith('//') || value.includes('..') || value.includes('\\')) return false;
-  return value.startsWith('/assets/img/') || value.startsWith('/uploads/');
-}
-function normalizeCar(input, previous = {}) {
-  const value = { ...previous };
-  for (const [key, max] of Object.entries(carStringLimits)) {
-    if (key in input) value[key] = cleanString(input[key], max);
+function normalizeDelivery(input = {}, previous = {}) {
+  const value = { available: previous.available !== false, charge: previous.charge ?? null, minimumOrder: previous.minimumOrder ?? null, areas: previous.areas || '', estimatedTime: previous.estimatedTime || '', note: previous.note || '' };
+  if ('available' in input) value.available = input.available === true;
+  if ('charge' in input) value.charge = toWholeNumber(input.charge, { min: 0, max: 100000, label: 'delivery charge' });
+  if ('minimumOrder' in input) value.minimumOrder = toWholeNumber(input.minimumOrder, { min: 0, max: 1000000, label: 'minimum order' });
+  for (const [key, limit] of Object.entries(deliveryTextLimits)) {
+    if (key in input) value[key] = cleanString(input[key], limit);
   }
-  for (const key of ['year', 'price', 'mileage']) {
-    if (key in input) {
-      const number = Number(input[key]);
-      if (!Number.isFinite(number)) throw Object.assign(new Error(`Please enter a valid ${key}.`), { status: 400 });
-      value[key] = Math.round(number);
-    }
-  }
-  if ('image' in input) {
-    if (!safeImagePath(input.image)) throw Object.assign(new Error('Choose an image from the website or upload a new photo.'), { status: 400 });
-    value.image = input.image;
-  }
-  if ('featured' in input) value.featured = input.featured === true;
-  if ('published' in input) value.published = input.published === true;
-  if (!allowedCategories.has(value.category)) throw Object.assign(new Error('Select a valid vehicle category.'), { status: 400 });
-  if (!value.name || !value.brand || !value.model) throw Object.assign(new Error('Car name, brand and model are required.'), { status: 400 });
-  if (!Number.isInteger(value.year) || value.year < 1950 || value.year > new Date().getFullYear() + 2) throw Object.assign(new Error('Enter a valid model year.'), { status: 400 });
-  if (!Number.isInteger(value.price) || value.price < 0 || value.price > 5_000_000_000) throw Object.assign(new Error('Enter a valid price in PKR.'), { status: 400 });
-  if (!Number.isInteger(value.mileage) || value.mileage < 0 || value.mileage > 2_000_000) throw Object.assign(new Error('Enter a valid mileage in kilometres.'), { status: 400 });
-  value.id = previous.id || randomUUID();
-  value.image ||= '/assets/img/alto.jpg';
-  value.description ||= '';
-  value.fuel ||= 'Petrol';
-  value.transmission ||= 'Manual';
-  value.engine ||= 'Not specified';
-  value.condition ||= 'Used';
-  value.category ||= 'Other';
-  value.featured = value.featured === true;
-  value.published = value.published !== false;
   return value;
 }
+function publicSite(source = site) {
+  const delivery = normalizeDelivery(source.delivery || {});
+  return {
+    name: RESTAURANT_NAME,
+    tagline: cleanString(source.tagline, siteTextLimits.tagline),
+    heroDescription: cleanString(source.heroDescription, siteTextLimits.heroDescription),
+    about: cleanString(source.about, siteTextLimits.about),
+    contactPerson: cleanString(source.contactPerson, siteTextLimits.contactPerson),
+    phone: normalizePhone(source.phone),
+    whatsapp: normalizePhone(source.whatsapp),
+    location: cleanString(source.location, siteTextLimits.location),
+    city: cleanString(source.city, siteTextLimits.city),
+    mapsQuery: cleanString(source.mapsQuery, siteTextLimits.mapsQuery) || 'Appetizer Fast Foods Nilore Islamabad Lehtrar Road',
+    delivery,
+  };
+}
+function safeImagePath(value) {
+  if (typeof value !== 'string' || value.length > 300) return false;
+  if (value === PLACEHOLDER_IMAGE) return true;
+  return /^\/assets\/img\/food\/[a-z0-9-]{1,80}\.(jpg|png|webp|svg)$/.test(value)
+    || /^\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp)$/.test(value);
+}
+function normalizeItem(input, previous = {}, existing = []) {
+  const value = { ...previous };
+  for (const [key, max] of Object.entries(itemStringLimits)) {
+    if (key in input) value[key] = cleanString(input[key], max);
+  }
+  if ('category' in input) {
+    const category = cleanString(input.category, 40);
+    if (!allowedCategories.has(category)) throw httpError(400, 'Select a valid menu category.');
+    value.category = category;
+  }
+  if ('price' in input) value.price = toWholeNumber(input.price, { min: 0, max: 1000000, label: 'price in PKR' });
+  if ('available' in input) value.available = input.available === true;
+  if ('published' in input) value.published = input.published === true;
+  if ('featured' in input) value.featured = input.featured === true;
+  if ('sortOrder' in input) value.sortOrder = toWholeNumber(input.sortOrder, { min: 0, max: 9999, label: 'display order' });
+  if ('image' in input) {
+    if (input.image === '' || input.image === null) value.image = PLACEHOLDER_IMAGE;
+    else if (safeImagePath(input.image)) value.image = input.image;
+    else throw httpError(400, 'Choose a photo from the upload button or remove the photo.');
+  }
+  if (!value.name) throw httpError(400, 'Each menu item needs a name.');
+  if (!allowedCategories.has(value.category)) throw httpError(400, 'Select a valid menu category.');
+  value.price = value.price ?? null;
+  value.description ||= '';
+  value.available = value.available !== false;
+  value.published = value.published !== false;
+  value.featured = value.featured === true;
+  value.image ||= PLACEHOLDER_IMAGE;
+  value.sortOrder ??= existing.reduce((max, item) => Math.max(max, Number(item.sortOrder) || 0), 0) + 10;
+  value.id = previous.id || randomUUID();
+  return value;
+}
+function publicItem(item) {
+  return {
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    description: item.description || '',
+    price: Number.isInteger(item.price) ? item.price : null,
+    available: item.available !== false,
+    image: safeImagePath(item.image) ? item.image : PLACEHOLDER_IMAGE,
+    featured: item.featured === true,
+    sortOrder: Number(item.sortOrder) || 0,
+  };
+}
+function sortedMenu(items) {
+  const order = new Map(CATEGORIES.map((name, index) => [name, index]));
+  return [...items].sort((a, b) => (order.get(a.category) ?? 99) - (order.get(b.category) ?? 99) || (a.sortOrder || 0) - (b.sortOrder || 0) || a.name.localeCompare(b.name));
+}
+async function removeUnusedUpload(imagePath) {
+  if (!/^\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp)$/.test(imagePath || '')) return;
+  if (menu.some((item) => item.image === imagePath)) return;
+  await fs.unlink(path.join(UPLOAD_DIR, path.basename(imagePath))).catch(() => {});
+}
 function clientKey(req) {
-  // Prefer the proxy-supplied visitor address when present so shared hosting does not rate-limit every visitor as one client.
-  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  // Only trust the proxy-supplied address when TRUST_PROXY=true, otherwise headers could be spoofed to dodge rate limits.
+  const forwarded = TRUST_PROXY ? String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() : '';
   return forwarded || req.socket.remoteAddress || 'unknown';
 }
 function isRateLimited(store, key, max, windowMs, increment = false) {
@@ -216,20 +272,22 @@ function getCookie(req, name) {
   const cookie = String(req.headers.cookie || '').split(';').map((item) => item.trim()).find((item) => item.startsWith(`${name}=`));
   return cookie ? decodeURIComponent(cookie.slice(name.length + 1)) : '';
 }
+function isSecureRequest(req) {
+  return req.socket.encrypted || (TRUST_PROXY && String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase() === 'https');
+}
 function sessionCookie(req, id) {
-  const secure = req.socket.encrypted || String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase() === 'https';
-  return `arc_session=${encodeURIComponent(id)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL / 1000)}${secure ? '; Secure' : ''}`;
+  return `aff_session=${encodeURIComponent(id)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL / 1000)}${isSecureRequest(req) ? '; Secure' : ''}`;
 }
 function originIsSameSite(req) {
   const origin = req.headers.origin;
   if (!origin) return true;
   try {
-    const forwardedHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
-    return new URL(origin).host === forwardedHost;
+    const host = (TRUST_PROXY ? String(req.headers['x-forwarded-host'] || '') : '') || req.headers.host || '';
+    return new URL(origin).host === String(host).split(',')[0].trim();
   } catch { return false; }
 }
 function getSession(req) {
-  const id = getCookie(req, 'arc_session');
+  const id = getCookie(req, 'aff_session');
   const session = id && sessions.get(id);
   if (!session) return null;
   if (session.expiresAt <= Date.now()) { sessions.delete(id); return null; }
@@ -241,47 +299,29 @@ function requireOwner(req, res, requireCsrf = true) {
   if (!session) { sendJson(res, 401, { error: 'Please sign in to continue.' }); return null; }
   if (!originIsSameSite(req)) { sendJson(res, 403, { error: 'Request origin not allowed.' }); return null; }
   if (requireCsrf && req.headers['x-csrf-token'] !== session.csrf) {
-    sendJson(res, 403, { error: 'This security token expired. Refresh the dashboard and try again.' });
+    sendJson(res, 403, { error: 'This security token expired. Refresh the page and try again.' });
     return null;
   }
   return session;
 }
-function querySortByNewest(items) { return [...items].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))); }
+function newSession(req) {
+  const id = randomBytes(32).toString('base64url');
+  const csrf = randomBytes(24).toString('base64url');
+  sessions.set(id, { csrf, expiresAt: Date.now() + SESSION_TTL });
+  return { id, csrf };
+}
+function adminPayload() {
+  return { site: publicSite(site), items: sortedMenu(menu), categories: CATEGORIES };
+}
+
 async function handleApi(req, res, url) {
   const route = url.pathname;
   if (route === '/api/public' && req.method === 'GET') {
-    sendJson(res, 200, { site: siteForPublic(), cars: cars.filter((car) => car.published === true) });
-    return true;
-  }
-  if (route === '/api/contact' && req.method === 'POST') {
-    if (isRateLimited(contactAttempts, clientKey(req), 18, 10 * 60 * 1000, true)) {
-      sendJson(res, 429, { error: 'Please wait a few minutes before sending another message.' });
-      return true;
-    }
-    const body = await readJsonBody(req, 12 * 1024);
-    if (cleanString(body.website, 200)) { sendJson(res, 201, { ok: true }); return true; }
-    const name = cleanString(body.name, 100);
-    const phone = normalizePhone(body.phone);
-    const email = cleanString(body.email, 160);
-    const message = cleanString(body.message, 1800);
-    if (name.length < 2 || !phoneIsValid(phone) || message.length < 8) {
-      sendJson(res, 400, { error: 'Please enter your name, a valid phone number and a message of at least 8 characters.' });
-      return true;
-    }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      sendJson(res, 400, { error: 'Please enter a valid email address, or leave the email field blank.' });
-      return true;
-    }
-    const carId = cleanString(body.carId, 100);
-    const inquiry = { id: randomUUID(), name, phone, email, message, carId: cars.find((car) => car.id === carId)?.id || '', read: false, createdAt: new Date().toISOString() };
-    inquiries = [inquiry, ...inquiries].slice(0, 500);
-    await persistJson('inquiries.json', inquiries);
-    sendJson(res, 201, { ok: true, message: 'Thanks — your message is in the owner’s inbox. For the fastest reply, call or WhatsApp the team.' });
-    return true;
-  }
-  if (route === '/api/admin/session' && req.method === 'GET') {
-    const session = getSession(req);
-    sendJson(res, 200, { authenticated: Boolean(session), csrfToken: session?.csrf || '' });
+    sendJson(res, 200, {
+      restaurant: publicSite(site),
+      categories: CATEGORIES,
+      items: sortedMenu(menu.filter((item) => item.published !== false)).map(publicItem),
+    });
     return true;
   }
   if (route === '/api/admin/login' && req.method === 'POST') {
@@ -299,17 +339,22 @@ async function handleApi(req, res, url) {
       return true;
     }
     loginAttempts.delete(key);
-    const id = randomBytes(32).toString('base64url');
-    const csrf = randomBytes(24).toString('base64url');
-    sessions.set(id, { csrf, expiresAt: Date.now() + SESSION_TTL });
-    sendJson(res, 200, { ok: true, csrfToken: csrf }, { 'Set-Cookie': sessionCookie(req, id) });
+    const session = newSession(req);
+    sendJson(res, 200, { ok: true, csrfToken: session.csrf }, { 'Set-Cookie': sessionCookie(req, session.id) });
+    return true;
+  }
+  if (route === '/api/admin/session' && req.method === 'GET') {
+    // Quiet probe: a signed-out visitor gets a normal 200 so the browser console stays clean.
+    const session = getSession(req);
+    if (!session || !originIsSameSite(req)) sendJson(res, 200, { ok: false });
+    else sendJson(res, 200, { ok: true, csrfToken: session.csrf });
     return true;
   }
   if (route === '/api/admin/logout' && req.method === 'POST') {
     const session = requireOwner(req, res);
     if (!session) return true;
     sessions.delete(session.id);
-    sendJson(res, 200, { ok: true }, { 'Set-Cookie': 'arc_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0' });
+    sendJson(res, 200, { ok: true }, { 'Set-Cookie': 'aff_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0' });
     return true;
   }
   if (route.startsWith('/api/admin/')) {
@@ -317,102 +362,85 @@ async function handleApi(req, res, url) {
     if (!session) return true;
 
     if (route === '/api/admin/data' && req.method === 'GET') {
-      sendJson(res, 200, { site: siteForPublic(), cars, inquiries: querySortByNewest(inquiries) });
+      sendJson(res, 200, adminPayload());
       return true;
     }
     if (route === '/api/admin/site' && req.method === 'PUT') {
       const body = await readJsonBody(req, 30 * 1024);
-      const next = { ...site };
-      for (const key of initialSiteFields) {
-        if (!(key in body)) continue;
-        const limit = key === 'about' ? 1400 : key.toLowerCase().includes('phone') ? 30 : 250;
-        next[key] = key.toLowerCase().includes('phone') ? normalizePhone(body[key]) : cleanString(body[key], limit);
+      const next = { ...site, delivery: normalizeDelivery(body.delivery || {}, site.delivery || {}) };
+      for (const [key, limit] of Object.entries(siteTextLimits)) {
+        if (key in body) next[key] = cleanString(body[key], limit);
       }
-      if (!next.ownerName || !next.secondOwnerName || !next.location || !phoneIsValid(next.ownerPhone) || !phoneIsValid(next.secondOwnerPhone)) {
-        sendJson(res, 400, { error: 'Add both owner names and valid phone numbers, plus the dealership location.' });
-        return true;
+      for (const key of ['phone', 'whatsapp']) {
+        if (key in body) next[key] = normalizePhone(body[key]);
       }
-      site = next;
-      await persistJson('site.json', site);
-      sendJson(res, 200, { site: siteForPublic() });
+      if (!next.contactPerson || !next.location || !phoneIsValid(next.phone) || !phoneIsValid(next.whatsapp)) {
+        throw httpError(400, 'Add the contact person, a valid phone and WhatsApp number, and the restaurant location.');
+      }
+      site = { ...next, name: RESTAURANT_NAME };
+      await persistJson('restaurant.json', site);
+      sendJson(res, 200, adminPayload());
       return true;
     }
-    if (route === '/api/admin/cars' && req.method === 'POST') {
+    if (route === '/api/admin/items' && req.method === 'POST') {
       const body = await readJsonBody(req, 16 * 1024);
-      const car = normalizeCar(body);
-      cars = [car, ...cars];
-      await persistJson('cars.json', cars);
-      sendJson(res, 201, { car });
+      const item = normalizeItem(body, {}, menu);
+      menu = [...menu, item];
+      await persistJson('menu.json', menu);
+      sendJson(res, 201, { item: publicItem(item) });
       return true;
     }
     if (route === '/api/admin/upload' && req.method === 'POST') {
       const body = await readJsonBody(req, Math.ceil(MAX_IMAGE_BYTES * 1.42) + 16 * 1024);
       const match = typeof body.dataUrl === 'string' && body.dataUrl.match(/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/);
-      if (!match) { sendJson(res, 400, { error: 'Upload a JPEG, PNG or WebP image.' }); return true; }
+      if (!match) throw httpError(400, 'Upload a JPEG, PNG or WebP image.');
       const [, imageType, encoded] = match;
       const bytes = Buffer.from(encoded, 'base64');
-      if (!bytes.length || bytes.length > MAX_IMAGE_BYTES) { sendJson(res, 413, { error: 'Please choose an image smaller than 5 MB.' }); return true; }
+      if (!bytes.length || bytes.length > MAX_IMAGE_BYTES) throw httpError(413, 'Please choose an image smaller than 5 MB.');
       const signatures = {
         jpeg: (b) => b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff,
         png: (b) => b.length > 8 && b.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])),
         webp: (b) => b.length > 12 && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP',
       };
-      if (!signatures[imageType](bytes)) { sendJson(res, 400, { error: 'The image file could not be verified. Please try another photo.' }); return true; }
+      if (!signatures[imageType](bytes)) throw httpError(400, 'The image file could not be verified. Please try another photo.');
       const extension = imageType === 'jpeg' ? '.jpg' : `.${imageType}`;
       const filename = `${randomUUID()}${extension}`;
       await fs.writeFile(path.join(UPLOAD_DIR, filename), bytes, { flag: 'wx', mode: 0o644 });
       sendJson(res, 201, { image: `/uploads/${filename}` });
       return true;
     }
-    const carMatch = route.match(/^\/api\/admin\/cars\/([a-zA-Z0-9-]{1,100})$/);
-    if (carMatch && req.method === 'PUT') {
-      const index = cars.findIndex((car) => car.id === carMatch[1]);
-      if (index < 0) { sendJson(res, 404, { error: 'Car not found.' }); return true; }
+    const itemMatch = route.match(/^\/api\/admin\/items\/([a-zA-Z0-9-]{1,100})$/);
+    if (itemMatch && req.method === 'PUT') {
+      const index = menu.findIndex((item) => item.id === itemMatch[1]);
+      if (index < 0) throw httpError(404, 'Menu item not found.');
       const body = await readJsonBody(req, 16 * 1024);
-      const updated = normalizeCar(body, cars[index]);
-      cars[index] = updated;
-      await persistJson('cars.json', cars);
-      sendJson(res, 200, { car: updated });
+      const previousImage = menu[index].image;
+      const updated = normalizeItem(body, menu[index], menu);
+      menu = menu.map((item, position) => (position === index ? updated : item));
+      await persistJson('menu.json', menu);
+      if (previousImage !== updated.image) await removeUnusedUpload(previousImage);
+      sendJson(res, 200, { item: publicItem(updated) });
       return true;
     }
-    if (carMatch && req.method === 'DELETE') {
-      const filtered = cars.filter((car) => car.id !== carMatch[1]);
-      if (filtered.length === cars.length) { sendJson(res, 404, { error: 'Car not found.' }); return true; }
-      cars = filtered;
-      await persistJson('cars.json', cars);
-      sendJson(res, 200, { ok: true });
-      return true;
-    }
-    const inquiryMatch = route.match(/^\/api\/admin\/inquiries\/([a-f0-9-]{36})$/i);
-    if (inquiryMatch && req.method === 'PATCH') {
-      await readJsonBody(req, 2 * 1024);
-      const inquiry = inquiries.find((entry) => entry.id === inquiryMatch[1]);
-      if (!inquiry) { sendJson(res, 404, { error: 'Message not found.' }); return true; }
-      inquiry.read = true;
-      await persistJson('inquiries.json', inquiries);
-      sendJson(res, 200, { ok: true });
-      return true;
-    }
-    if (inquiryMatch && req.method === 'DELETE') {
-      const filtered = inquiries.filter((entry) => entry.id !== inquiryMatch[1]);
-      if (filtered.length === inquiries.length) { sendJson(res, 404, { error: 'Message not found.' }); return true; }
-      inquiries = filtered;
-      await persistJson('inquiries.json', inquiries);
+    if (itemMatch && req.method === 'DELETE') {
+      const removed = menu.find((item) => item.id === itemMatch[1]);
+      if (!removed) throw httpError(404, 'Menu item not found.');
+      menu = menu.filter((item) => item.id !== itemMatch[1]);
+      await persistJson('menu.json', menu);
+      await removeUnusedUpload(removed.image);
       sendJson(res, 200, { ok: true });
       return true;
     }
     if (route === '/api/admin/password' && req.method === 'POST') {
       const body = await readJsonBody(req, 4 * 1024);
-      if (!passwordMatches(body.currentPassword)) { sendJson(res, 401, { error: 'Your current password was not correct.' }); return true; }
+      if (!passwordMatches(body.currentPassword)) { sendJson(res, 400, { error: 'Your current password was not correct.' }); return true; }
       const nextPassword = typeof body.newPassword === 'string' ? body.newPassword : '';
       if (nextPassword.length < 12 || nextPassword.length > 200) { sendJson(res, 400, { error: 'Choose a new password between 12 and 200 characters long.' }); return true; }
       auth = makePasswordRecord(nextPassword);
       await persistJson('owner-auth.json', auth);
       sessions.clear();
-      const id = randomBytes(32).toString('base64url');
-      const csrf = randomBytes(24).toString('base64url');
-      sessions.set(id, { csrf, expiresAt: Date.now() + SESSION_TTL });
-      sendJson(res, 200, { ok: true, csrfToken: csrf }, { 'Set-Cookie': sessionCookie(req, id) });
+      const session = newSession(req);
+      sendJson(res, 200, { ok: true, csrfToken: session.csrf }, { 'Set-Cookie': sessionCookie(req, session.id) });
       return true;
     }
     sendJson(res, 404, { error: 'Admin route not found.' });
@@ -422,37 +450,42 @@ async function handleApi(req, res, url) {
   return false;
 }
 
-async function serveStatic(req, res, url) {
-  const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
-  let decoded;
-  try { decoded = decodeURIComponent(pathname); }
-  catch { sendText(res, 400, 'Bad request'); return; }
-  const candidate = path.resolve(PUBLIC_DIR, `.${decoded}`);
-  const relative = path.relative(PUBLIC_DIR, candidate);
-  if (relative.startsWith('..') || path.isAbsolute(relative)) { sendText(res, 403, 'Forbidden'); return; }
-  let target = candidate;
-  try {
-    const info = await fs.stat(target);
-    if (!info.isFile()) throw Object.assign(new Error('Not a file'), { code: 'ENOENT' });
-  } catch (error) {
-    if (error.code !== 'ENOENT') { sendText(res, 404, 'Not found'); return; }
-    // Client-side car detail/admin routes have the same accessible app shell.
-    if (!path.extname(decoded) && !decoded.startsWith('/api/')) target = path.join(PUBLIC_DIR, 'index.html');
-    else { sendText(res, 404, 'Not found'); return; }
-  }
-  const type = mimeByExtension[path.extname(target).toLowerCase()] || 'application/octet-stream';
-  const cache = path.basename(target) === 'index.html' ? 'no-cache' : target.includes(`${path.sep}uploads${path.sep}`) || target.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=604800, immutable' : 'public, max-age=1800';
-  const size = await fs.stat(target).then((stat) => stat.size).catch(() => 0);
-  res.writeHead(200, { 'Content-Type': type, 'Content-Length': size, 'Cache-Control': cache });
+async function serveFile(req, res, target, status = 200) {
+  const extension = path.extname(target).toLowerCase();
+  const type = mimeByExtension[extension] || 'application/octet-stream';
+  const inUploads = target.startsWith(`${path.join(PUBLIC_DIR, 'uploads')}${path.sep}`);
+  const inAssets = target.startsWith(`${path.join(PUBLIC_DIR, 'assets')}${path.sep}`);
+  const cache = inUploads ? 'public, max-age=604800, immutable'
+    : inAssets ? 'public, max-age=86400'
+      : (extension === '.html' ? 'no-cache' : 'public, max-age=0, must-revalidate');
+  const headers = { 'Content-Type': type, 'Cache-Control': cache };
+  if (target.endsWith(`${path.sep}admin.html`)) headers['X-Robots-Tag'] = 'noindex, nofollow';
+  const size = (await fs.stat(target)).size;
+  res.writeHead(status, { ...headers, 'Content-Length': size });
   if (req.method === 'HEAD') { res.end(); return; }
   const stream = createReadStream(target);
   stream.on('error', () => { if (!res.headersSent) sendText(res, 500, 'Unable to read file'); else res.destroy(); });
   stream.pipe(res);
 }
 
+async function serveStatic(req, res, url) {
+  const pathname = clientRoutes.get(url.pathname) || url.pathname;
+  let decoded;
+  try { decoded = decodeURIComponent(pathname); }
+  catch { sendText(res, 400, 'Bad request'); return; }
+  const candidate = path.resolve(PUBLIC_DIR, `.${decoded}`);
+  const relative = path.relative(PUBLIC_DIR, candidate);
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) { sendText(res, 403, 'Forbidden'); return; }
+  const info = await fs.stat(candidate).catch(() => null);
+  if (info?.isFile()) { await serveFile(req, res, candidate); return; }
+  const notFound = path.join(PUBLIC_DIR, '404.html');
+  if (await fs.stat(notFound).then((stat) => stat.isFile()).catch(() => false)) await serveFile(req, res, notFound, 404);
+  else sendText(res, 404, 'Not found');
+}
+
 const server = http.createServer(async (req, res) => {
   setBaseHeaders(res);
-  const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+  const url = new URL(req.url || '/', 'http://localhost');
   try {
     if (url.pathname.startsWith('/api/')) {
       const handled = await handleApi(req, res, url);
@@ -463,9 +496,7 @@ const server = http.createServer(async (req, res) => {
     await serveStatic(req, res, url);
   } catch (error) {
     if (res.writableEnded) return;
-    if (error.status === 413) sendJson(res, 413, { error: error.message });
-    else if (error.status === 400) sendJson(res, 400, { error: error.message });
-    else if (error.status === 415) sendJson(res, 415, { error: error.message });
+    if ([400, 401, 403, 404, 413, 415].includes(error.status)) sendJson(res, error.status, { error: error.message });
     else {
       console.error('Request failed:', error);
       sendJson(res, 500, { error: 'Something went wrong. Please try again.' });
@@ -474,4 +505,4 @@ const server = http.createServer(async (req, res) => {
 });
 
 await init();
-server.listen(PORT, '0.0.0.0', () => console.log(`AL RAFAY CORPORATION is ready on 0.0.0.0:${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`${RESTAURANT_NAME} is ready on 0.0.0.0:${PORT}`));
