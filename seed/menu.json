@@ -1,0 +1,101 @@
+[
+  {
+    "id": "zinger-burger",
+    "name": "Zinger Burger",
+    "category": "Burgers",
+    "description": "Crispy, golden-fried chicken fillet with fresh lettuce, creamy mayo and a soft bun — the crowd-favourite for burger lovers.",
+    "price": null,
+    "image": "/assets/img/zinger.jpg",
+    "available": true,
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "anda-burger",
+    "name": "Anda Burger (Egg Burger)",
+    "category": "Burgers",
+    "description": "Classic Pakistani anda burger with a fluffy fried egg, spiced patty, onions and tangy chutney in a toasted bun.",
+    "price": null,
+    "image": "/assets/img/anda-burger.jpg",
+    "available": true,
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "shawarma",
+    "name": "Shawarma",
+    "category": "Shawarma",
+    "description": "Tender, marinated chicken wrapped with garlic sauce, fresh veggies and soft pita — rolled fresh for a satisfying bite.",
+    "price": null,
+    "image": "/assets/img/shawarma.jpg",
+    "available": true,
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "fruit-chaat",
+    "name": "Fruit Chaat",
+    "category": "Chaat and Refreshments",
+    "description": "A refreshing medley of seasonal fruits tossed with chaat masala, lemon and a hint of sweetness — light and energizing.",
+    "price": null,
+    "image": "/assets/img/fruit-chaat.jpg",
+    "available": true,
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "chana-chaat",
+    "name": "Chana Chaat",
+    "category": "Chaat and Refreshments",
+    "description": "Tangy chickpeas mixed with onions, tomatoes, green chutney and aromatic spices — a true street-food classic.",
+    "price": null,
+    "image": "/assets/img/chana-chaat.jpg",
+    "available": true,
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "samosa-plate",
+    "name": "Samosa Plate",
+    "category": "Snacks",
+    "description": "Golden, crispy samosas filled with savoury potato and peas, served with tangy imli chutney. Perfect for sharing.",
+    "price": null,
+    "image": "/assets/img/samosa.jpg",
+    "available": true,
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "dahi-baray",
+    "name": "Dahi Baray",
+    "category": "Snacks",
+    "description": "Soft lentil dumplings soaked in creamy yogurt, topped with sweet-and-spicy chutneys and a sprinkle of chaat masala.",
+    "price": null,
+    "image": "/assets/img/dahi-baray.jpg",
+    "available": true,
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "chicken-seekh",
+    "name": "Chicken Seekh",
+    "category": "BBQ and Chicken",
+    "description": "Juicy, charcoal-grilled chicken seekh kebabs seasoned with traditional spices — smoky, tender and full of flavour.",
+    "price": null,
+    "image": "/assets/img/chicken-seekh.jpg",
+    "available": true,
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "milkshakes",
+    "name": "Milkshakes",
+    "category": "Beverages",
+    "description": "Chilled, creamy milkshakes blended fresh — choose your favourite flavour for a cool, delightful refreshment.",
+    "price": null,
+    "image": "/assets/img/milkshake.jpg",
+    "available": true,
+    "featured": true,
+    "published": true
+  }
+]

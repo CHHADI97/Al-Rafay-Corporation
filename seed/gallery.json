@@ -1,0 +1,8 @@
+[
+  { "id": "g1", "image": "/assets/img/zinger.jpg", "alt": "Close-up of a crispy Zinger Burger with lettuce and mayo" },
+  { "id": "g2", "image": "/assets/img/shawarma.jpg", "alt": "Fresh chicken shawarma wraps with vegetables" },
+  { "id": "g3", "image": "/assets/img/fruit-chaat.jpg", "alt": "Colorful fruit chaat bowl with spices" },
+  { "id": "g4", "image": "/assets/img/samosa.jpg", "alt": "Plate of golden fried samosas with chutney" },
+  { "id": "g5", "image": "/assets/img/chicken-seekh.jpg", "alt": "Grilled chicken seekh kebabs on skewers" },
+  { "id": "g6", "image": "/assets/img/milkshake.jpg", "alt": "Refreshing milkshakes topped with cream" }
+]

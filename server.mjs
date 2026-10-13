@@ -19,7 +19,6 @@ function loadDotEnv() {
   }
 }
 function requireEnvFile() {
-  // Kept synchronous and deliberately tiny: no dependency is needed just to read local deployment settings.
   return process.getBuiltinModule('node:fs').readFileSync(path.join(ROOT, '.env'), 'utf8');
 }
 loadDotEnv();
@@ -36,20 +35,17 @@ const sessions = new Map();
 const loginAttempts = new Map();
 const contactAttempts = new Map();
 
-let cars;
-let site;
-let inquiries;
-let auth;
+let menu = [];
+let site = {};
+let gallery = [];
+let inquiries = [];
+let auth = null;
 
 const initialSiteFields = [
-  'tagline', 'heroDescription', 'about', 'ownerName', 'ownerPhone',
-  'secondOwnerName', 'secondOwnerPhone', 'location', 'city',
+  'tagline', 'heroDescription', 'about', 'contactPerson', 'phone', 'whatsapp', 'location', 'city', 'openingHours'
 ];
-const carStringLimits = {
-  name: 90, brand: 55, model: 80, fuel: 35, transmission: 35,
-  engine: 55, condition: 40, category: 25, description: 1200,
-};
-const allowedCategories = new Set(['Hatchback', 'Sedan', 'SUV', 'Other']);
+
+const allowedCategories = new Set(['Burgers', 'Shawarma', 'Chaat and Refreshments', 'Snacks', 'BBQ and Chicken', 'Beverages']);
 const mimeByExtension = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.json': JSON_MIME, '.woff2': 'font/woff2' };
 
 async function readJson(file, fallback) {
@@ -80,7 +76,8 @@ function passwordMatches(password, record = auth) {
 async function init() {
   await fs.mkdir(DATA_DIR, { recursive: true, mode: 0o700 });
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  for (const [name, fallback] of [['cars.json', []], ['site.json', {}], ['inquiries.json', []]]) {
+  // seed defaults
+  for (const [name, fallback] of [['menu.json', []], ['site.json', {}], ['gallery.json', []], ['inquiries.json', []]]) {
     const destination = path.join(DATA_DIR, name);
     try { await fs.access(destination); }
     catch {
@@ -88,10 +85,26 @@ async function init() {
       await persistJson(name, initial);
     }
   }
-  cars = await readJson(path.join(DATA_DIR, 'cars.json'), []);
+  // migration: if old cars.json exists and menu.json empty, migrate?
+  // keep compatibility: if storage has cars.json but menu.json is empty, we ignore cars.
+  menu = await readJson(path.join(DATA_DIR, 'menu.json'), []);
   site = await readJson(path.join(DATA_DIR, 'site.json'), {});
+  gallery = await readJson(path.join(DATA_DIR, 'gallery.json'), []);
   inquiries = await readJson(path.join(DATA_DIR, 'inquiries.json'), []);
   auth = await readJson(path.join(DATA_DIR, 'owner-auth.json'), null);
+  // ensure site has defaults if empty
+  if (!site || Object.keys(site).length === 0) {
+    site = await readJson(path.join(SEED_DIR, 'site.json'), {});
+    await persistJson('site.json', site);
+  }
+  if (!menu || menu.length === 0) {
+    menu = await readJson(path.join(SEED_DIR, 'menu.json'), []);
+    await persistJson('menu.json', menu);
+  }
+  if (!gallery || gallery.length === 0) {
+    gallery = await readJson(path.join(SEED_DIR, 'gallery.json'), []);
+    await persistJson('gallery.json', gallery);
+  }
   if (!auth?.salt || !auth?.hash) {
     const configuredPassword = process.env.ADMIN_PASSWORD;
     if (configuredPassword && configuredPassword.length < 12) {
@@ -103,7 +116,7 @@ async function init() {
     if (configuredPassword) {
       console.log('Owner login is provisioned from ADMIN_PASSWORD. The dashboard is available at /admin.');
     } else {
-      console.log('\n╭─ AL RAFAY CORPORATION · OWNER LOGIN ──────────────────');
+      console.log('\n╭─ APPETIZER FAST FOODS · OWNER LOGIN ──────────────────');
       console.log(`│ Owner password: ${initialPassword}`);
       console.log('│ Save this now, sign in at /admin, and change it there.');
       console.log('╰───────────────────────────────────────────────────────\n');
@@ -116,7 +129,7 @@ function setBaseHeaders(res) {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-src https://www.google.com https://maps.google.com");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; frame-src https://www.google.com https://maps.google.com");
 }
 function sendJson(res, status, data, extraHeaders = {}) {
   if (res.writableEnded) return;
@@ -158,49 +171,76 @@ function phoneIsValid(value) {
   return digits.length >= 7 && digits.length <= 15;
 }
 function siteForPublic() {
-  return Object.fromEntries(initialSiteFields.map((key) => [key, key.toLowerCase().includes('phone') ? normalizePhone(site?.[key]) : cleanString(site?.[key], key === 'about' ? 1400 : 250)]));
+  const out = {};
+  for (const key of initialSiteFields) {
+    const val = site?.[key];
+    if (key.toLowerCase().includes('phone') || key === 'whatsapp') out[key] = normalizePhone(val || '');
+    else if (key === 'openingHours') out[key] = cleanString(val, 500);
+    else out[key] = cleanString(val, key === 'about' ? 2000 : 350);
+  }
+  // provide compatible fallback for older field names
+  if (!out.phone && site?.ownerPhone) out.phone = normalizePhone(site.ownerPhone);
+  if (!out.contactPerson && site?.ownerName) out.contactPerson = cleanString(site.ownerName, 100);
+  return out;
+}
+function siteForAdmin() {
+  return siteForPublic();
 }
 function safeImagePath(value) {
   if (typeof value !== 'string' || value.length > 300 || !value.startsWith('/') || value.startsWith('//') || value.includes('..') || value.includes('\\')) return false;
   return value.startsWith('/assets/img/') || value.startsWith('/uploads/');
 }
-function normalizeCar(input, previous = {}) {
+function normalizeMenuItem(input, previous = {}) {
   const value = { ...previous };
-  for (const [key, max] of Object.entries(carStringLimits)) {
-    if (key in input) value[key] = cleanString(input[key], max);
-  }
-  for (const key of ['year', 'price', 'mileage']) {
-    if (key in input) {
-      const number = Number(input[key]);
-      if (!Number.isFinite(number)) throw Object.assign(new Error(`Please enter a valid ${key}.`), { status: 400 });
-      value[key] = Math.round(number);
+  value.name = 'name' in input ? cleanString(input.name, 80) : value.name;
+  value.category = 'category' in input ? cleanString(input.category, 40) : value.category;
+  value.description = 'description' in input ? cleanString(input.description, 1200) : value.description;
+  if ('price' in input) {
+    if (input.price === '' || input.price === null || input.price === undefined) {
+      value.price = null;
+    } else {
+      const number = Number(input.price);
+      if (!Number.isFinite(number)) throw Object.assign(new Error('Please enter a valid price.'), { status: 400 });
+      const rounded = Math.round(number);
+      if (rounded < 0 || rounded > 100000) throw Object.assign(new Error('Enter a valid price in PKR (0 – 100,000).'), { status: 400 });
+      value.price = rounded;
     }
   }
   if ('image' in input) {
     if (!safeImagePath(input.image)) throw Object.assign(new Error('Choose an image from the website or upload a new photo.'), { status: 400 });
     value.image = input.image;
   }
+  if ('available' in input) value.available = input.available === true;
   if ('featured' in input) value.featured = input.featured === true;
   if ('published' in input) value.published = input.published === true;
-  if (!allowedCategories.has(value.category)) throw Object.assign(new Error('Select a valid vehicle category.'), { status: 400 });
-  if (!value.name || !value.brand || !value.model) throw Object.assign(new Error('Car name, brand and model are required.'), { status: 400 });
-  if (!Number.isInteger(value.year) || value.year < 1950 || value.year > new Date().getFullYear() + 2) throw Object.assign(new Error('Enter a valid model year.'), { status: 400 });
-  if (!Number.isInteger(value.price) || value.price < 0 || value.price > 5_000_000_000) throw Object.assign(new Error('Enter a valid price in PKR.'), { status: 400 });
-  if (!Number.isInteger(value.mileage) || value.mileage < 0 || value.mileage > 2_000_000) throw Object.assign(new Error('Enter a valid mileage in kilometres.'), { status: 400 });
-  value.id = previous.id || randomUUID();
-  value.image ||= '/assets/img/alto.jpg';
+
+  if (!value.name) throw Object.assign(new Error('Product name is required.'), { status: 400 });
+  if (!allowedCategories.has(value.category)) throw Object.assign(new Error('Select a valid category.'), { status: 400 });
+  value.id = previous.id || cleanString(input.id, 80) || randomUUID();
+  // slug-like id validation: allow alphanumeric + dash
+  value.id = value.id.replace(/[^a-zA-Z0-9\-_]/g, '-').slice(0, 80) || randomUUID();
+  value.image ||= '/assets/img/zinger.jpg';
   value.description ||= '';
-  value.fuel ||= 'Petrol';
-  value.transmission ||= 'Manual';
-  value.engine ||= 'Not specified';
-  value.condition ||= 'Used';
-  value.category ||= 'Other';
+  value.price = value.price ?? null;
+  value.available = value.available !== false;
   value.featured = value.featured === true;
   value.published = value.published !== false;
+  // ensure uniqueness? keep as is
+  return value;
+}
+function normalizeGalleryItem(input, previous = {}) {
+  const value = { ...previous };
+  if ('image' in input) {
+    if (!safeImagePath(input.image)) throw Object.assign(new Error('Choose an image from the website or upload a new photo.'), { status: 400 });
+    value.image = input.image;
+  }
+  if ('alt' in input) value.alt = cleanString(input.alt, 200);
+  value.id = previous.id || randomUUID();
+  if (!value.image) throw Object.assign(new Error('Gallery image is required.'), { status: 400 });
+  value.alt ||= 'Delicious food from Appetizer Fast Foods';
   return value;
 }
 function clientKey(req) {
-  // Prefer the proxy-supplied visitor address when present so shared hosting does not rate-limit every visitor as one client.
   const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
   return forwarded || req.socket.remoteAddress || 'unknown';
 }
@@ -218,7 +258,7 @@ function getCookie(req, name) {
 }
 function sessionCookie(req, id) {
   const secure = req.socket.encrypted || String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase() === 'https';
-  return `arc_session=${encodeURIComponent(id)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL / 1000)}${secure ? '; Secure' : ''}`;
+  return `aff_session=${encodeURIComponent(id)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL / 1000)}${secure ? '; Secure' : ''}`;
 }
 function originIsSameSite(req) {
   const origin = req.headers.origin;
@@ -229,7 +269,7 @@ function originIsSameSite(req) {
   } catch { return false; }
 }
 function getSession(req) {
-  const id = getCookie(req, 'arc_session');
+  const id = getCookie(req, 'aff_session') || getCookie(req, 'arc_session');
   const session = id && sessions.get(id);
   if (!session) return null;
   if (session.expiresAt <= Date.now()) { sessions.delete(id); return null; }
@@ -250,7 +290,7 @@ function querySortByNewest(items) { return [...items].sort((a, b) => String(b.cr
 async function handleApi(req, res, url) {
   const route = url.pathname;
   if (route === '/api/public' && req.method === 'GET') {
-    sendJson(res, 200, { site: siteForPublic(), cars: cars.filter((car) => car.published === true) });
+    sendJson(res, 200, { site: siteForPublic(), menu: menu.filter((item) => item.published !== false), gallery: gallery });
     return true;
   }
   if (route === '/api/contact' && req.method === 'POST') {
@@ -262,21 +302,20 @@ async function handleApi(req, res, url) {
     if (cleanString(body.website, 200)) { sendJson(res, 201, { ok: true }); return true; }
     const name = cleanString(body.name, 100);
     const phone = normalizePhone(body.phone);
-    const email = cleanString(body.email, 160);
     const message = cleanString(body.message, 1800);
     if (name.length < 2 || !phoneIsValid(phone) || message.length < 8) {
       sendJson(res, 400, { error: 'Please enter your name, a valid phone number and a message of at least 8 characters.' });
       return true;
     }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const email = cleanString(body.email, 160);
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       sendJson(res, 400, { error: 'Please enter a valid email address, or leave the email field blank.' });
       return true;
     }
-    const carId = cleanString(body.carId, 100);
-    const inquiry = { id: randomUUID(), name, phone, email, message, carId: cars.find((car) => car.id === carId)?.id || '', read: false, createdAt: new Date().toISOString() };
+    const inquiry = { id: randomUUID(), name, phone, email, message, read: false, createdAt: new Date().toISOString() };
     inquiries = [inquiry, ...inquiries].slice(0, 500);
     await persistJson('inquiries.json', inquiries);
-    sendJson(res, 201, { ok: true, message: 'Thanks — your message is in the owner’s inbox. For the fastest reply, call or WhatsApp the team.' });
+    sendJson(res, 201, { ok: true, message: 'Thanks — your message is in the owner’s inbox. For the fastest reply, please WhatsApp us.' });
     return true;
   }
   if (route === '/api/admin/session' && req.method === 'GET') {
@@ -309,7 +348,7 @@ async function handleApi(req, res, url) {
     const session = requireOwner(req, res);
     if (!session) return true;
     sessions.delete(session.id);
-    sendJson(res, 200, { ok: true }, { 'Set-Cookie': 'arc_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0' });
+    sendJson(res, 200, { ok: true }, { 'Set-Cookie': 'aff_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0' });
     return true;
   }
   if (route.startsWith('/api/admin/')) {
@@ -317,7 +356,7 @@ async function handleApi(req, res, url) {
     if (!session) return true;
 
     if (route === '/api/admin/data' && req.method === 'GET') {
-      sendJson(res, 200, { site: siteForPublic(), cars, inquiries: querySortByNewest(inquiries) });
+      sendJson(res, 200, { site: siteForAdmin(), menu, gallery, inquiries: querySortByNewest(inquiries) });
       return true;
     }
     if (route === '/api/admin/site' && req.method === 'PUT') {
@@ -325,24 +364,35 @@ async function handleApi(req, res, url) {
       const next = { ...site };
       for (const key of initialSiteFields) {
         if (!(key in body)) continue;
-        const limit = key === 'about' ? 1400 : key.toLowerCase().includes('phone') ? 30 : 250;
-        next[key] = key.toLowerCase().includes('phone') ? normalizePhone(body[key]) : cleanString(body[key], limit);
+        const limit = key === 'about' ? 2000 : key === 'openingHours' ? 500 : key.toLowerCase().includes('phone') || key === 'whatsapp' ? 30 : 350;
+        let val = body[key];
+        if (key === 'phone' || key === 'whatsapp') next[key] = normalizePhone(val);
+        else next[key] = cleanString(val, limit);
       }
-      if (!next.ownerName || !next.secondOwnerName || !next.location || !phoneIsValid(next.ownerPhone) || !phoneIsValid(next.secondOwnerPhone)) {
-        sendJson(res, 400, { error: 'Add both owner names and valid phone numbers, plus the dealership location.' });
+      // keep backward compatibility for old fields
+      if (!next.phone && next.ownerPhone) next.phone = normalizePhone(next.ownerPhone);
+      if (!next.contactPerson && next.ownerName) next.contactPerson = cleanString(next.ownerName, 100);
+      if (!next.contactPerson || !next.location || !phoneIsValid(next.phone)) {
+        sendJson(res, 400, { error: 'Add contact person, a valid phone number and the restaurant location.' });
         return true;
       }
+      if (next.whatsapp && !phoneIsValid(next.whatsapp)) {
+        sendJson(res, 400, { error: 'WhatsApp number is not valid.' });
+        return true;
+      }
+      if (!next.whatsapp) next.whatsapp = next.phone;
       site = next;
       await persistJson('site.json', site);
       sendJson(res, 200, { site: siteForPublic() });
       return true;
     }
-    if (route === '/api/admin/cars' && req.method === 'POST') {
+    if (route === '/api/admin/menu' && req.method === 'POST') {
       const body = await readJsonBody(req, 16 * 1024);
-      const car = normalizeCar(body);
-      cars = [car, ...cars];
-      await persistJson('cars.json', cars);
-      sendJson(res, 201, { car });
+      const item = normalizeMenuItem(body);
+      if (menu.find(m => m.id === item.id)) throw Object.assign(new Error('An item with this ID already exists.'), { status: 409 });
+      menu = [item, ...menu];
+      await persistJson('menu.json', menu);
+      sendJson(res, 201, { item });
       return true;
     }
     if (route === '/api/admin/upload' && req.method === 'POST') {
@@ -364,26 +414,65 @@ async function handleApi(req, res, url) {
       sendJson(res, 201, { image: `/uploads/${filename}` });
       return true;
     }
-    const carMatch = route.match(/^\/api\/admin\/cars\/([a-zA-Z0-9-]{1,100})$/);
-    if (carMatch && req.method === 'PUT') {
-      const index = cars.findIndex((car) => car.id === carMatch[1]);
-      if (index < 0) { sendJson(res, 404, { error: 'Car not found.' }); return true; }
-      const body = await readJsonBody(req, 16 * 1024);
-      const updated = normalizeCar(body, cars[index]);
-      cars[index] = updated;
-      await persistJson('cars.json', cars);
-      sendJson(res, 200, { car: updated });
+    // Gallery endpoints
+    if (route === '/api/admin/gallery' && req.method === 'POST') {
+      const body = await readJsonBody(req, 8 * 1024);
+      const item = normalizeGalleryItem(body);
+      gallery = [item, ...gallery].slice(0, 100);
+      await persistJson('gallery.json', gallery);
+      sendJson(res, 201, { item });
       return true;
     }
-    if (carMatch && req.method === 'DELETE') {
-      const filtered = cars.filter((car) => car.id !== carMatch[1]);
-      if (filtered.length === cars.length) { sendJson(res, 404, { error: 'Car not found.' }); return true; }
-      cars = filtered;
-      await persistJson('cars.json', cars);
+    if (route === '/api/admin/gallery' && req.method === 'GET') {
+      sendJson(res, 200, { gallery });
+      return true;
+    }
+    const galleryMatch = route.match(/^\/api\/admin\/gallery\/([a-zA-Z0-9\-]{1,100})$/);
+    if (galleryMatch && req.method === 'DELETE') {
+      const id = galleryMatch[1];
+      const filtered = gallery.filter(g => g.id !== id);
+      if (filtered.length === gallery.length) { sendJson(res, 404, { error: 'Gallery image not found.' }); return true; }
+      gallery = filtered;
+      await persistJson('gallery.json', gallery);
       sendJson(res, 200, { ok: true });
       return true;
     }
-    const inquiryMatch = route.match(/^\/api\/admin\/inquiries\/([a-f0-9-]{36})$/i);
+    if (galleryMatch && req.method === 'PUT') {
+      const id = galleryMatch[1];
+      const idx = gallery.findIndex(g => g.id === id);
+      if (idx < 0) { sendJson(res, 404, { error: 'Gallery image not found.' }); return true; }
+      const body = await readJsonBody(req, 8 * 1024);
+      const updated = normalizeGalleryItem(body, gallery[idx]);
+      gallery[idx] = updated;
+      await persistJson('gallery.json', gallery);
+      sendJson(res, 200, { item: updated });
+      return true;
+    }
+
+    const menuMatch = route.match(/^\/api\/admin\/menu\/([a-zA-Z0-9\-_]{1,100})$/);
+    if (menuMatch && req.method === 'PUT') {
+      const index = menu.findIndex((item) => item.id === menuMatch[1]);
+      if (index < 0) { sendJson(res, 404, { error: 'Menu item not found.' }); return true; }
+      const body = await readJsonBody(req, 16 * 1024);
+      const updated = normalizeMenuItem(body, menu[index]);
+      // if ID changed, ensure not duplicate
+      if (updated.id !== menu[index].id && menu.find(m => m.id === updated.id)) {
+        sendJson(res, 409, { error: 'Another item already uses this ID.' }); return true;
+      }
+      menu[index] = updated;
+      await persistJson('menu.json', menu);
+      sendJson(res, 200, { item: updated });
+      return true;
+    }
+    if (menuMatch && req.method === 'DELETE') {
+      const filtered = menu.filter((item) => item.id !== menuMatch[1]);
+      if (filtered.length === menu.length) { sendJson(res, 404, { error: 'Menu item not found.' }); return true; }
+      menu = filtered;
+      await persistJson('menu.json', menu);
+      sendJson(res, 200, { ok: true });
+      return true;
+    }
+    const inquiryMatch = route.match(/^\/api\/admin\/inquiries\/([a-f0-9\-]{36})$/i);
     if (inquiryMatch && req.method === 'PATCH') {
       await readJsonBody(req, 2 * 1024);
       const inquiry = inquiries.find((entry) => entry.id === inquiryMatch[1]);
@@ -415,6 +504,8 @@ async function handleApi(req, res, url) {
       sendJson(res, 200, { ok: true, csrfToken: csrf }, { 'Set-Cookie': sessionCookie(req, id) });
       return true;
     }
+    // legacy car routes support for migration — map to menu
+    if (route === '/api/admin/cars' && req.method === 'GET') { sendJson(res, 200, { menu }); return true; }
     sendJson(res, 404, { error: 'Admin route not found.' });
     return true;
   }
@@ -436,7 +527,6 @@ async function serveStatic(req, res, url) {
     if (!info.isFile()) throw Object.assign(new Error('Not a file'), { code: 'ENOENT' });
   } catch (error) {
     if (error.code !== 'ENOENT') { sendText(res, 404, 'Not found'); return; }
-    // Client-side car detail/admin routes have the same accessible app shell.
     if (!path.extname(decoded) && !decoded.startsWith('/api/')) target = path.join(PUBLIC_DIR, 'index.html');
     else { sendText(res, 404, 'Not found'); return; }
   }
@@ -474,4 +564,4 @@ const server = http.createServer(async (req, res) => {
 });
 
 await init();
-server.listen(PORT, '0.0.0.0', () => console.log(`AL RAFAY CORPORATION is ready on 0.0.0.0:${PORT}`));
+server.listen(PORT, '0.0.0.0', () => console.log(`Appetizer Fast Foods is ready on 0.0.0.0:${PORT}`));
